@@ -15,7 +15,7 @@ def createDataMatrix(images):
     '''
     numImages = len(images)
     sz = images[0].shape
-    data = np.zeros((numImages,sz[0] * sz[1] * sz[2]),dtype=np.float32)
+    data = np.zeros((numImages,sz[0] * sz[1]),dtype=np.float32)
     print(data)
     print(numImages)
     for i in range(0,numImages):
@@ -37,7 +37,8 @@ def readImages(path):
                 #
                 imagePath = os.path.join(path,filePath)
                 print(imagePath)
-                im = cv2.imread(imagePath)
+                iz = cv2.imread(imagePath)
+                im = cv2.cvtColor(iz, cv2.COLOR_BGR2GRAY)
 
                 if im is None: 
                     print("image:{} no read properly".format(imagePath))
@@ -79,26 +80,52 @@ if __name__ == '__main__':
     print(len(images))
     #Size of images
     sz = images[0].shape
+    print(sz)
     #Create data matrix for PCA
     data = createDataMatrix(images)
     print("Data")
     print(data)
     print("Calculating PCA ")
     mean, eigenVectors = cv2.PCACompute(data,mean=None,maxComponents=NUM_EIGEN_FACES)
+
+    covar, mean2 = cv2.calcCovarMatrix(data, 0,cv2.COVAR_SCALE | cv2.COVAR_ROWS | cv2.COVAR_SCRAMBLED)
+    print("Mean 1")
+    print(mean)
+    print("Mean 2")
+    print(mean2)
     print("DONE")
-
-    averageFace = mean.reshape(sz)
-
-    #eigenFaces = []
-
-    #for eigenVector in eigenVectors:
-    #        eigenFace = eigenVector.reshape(sz)
-    #        eigenFaces.append(eigenFace)
+    print("Covar ",covar)
+    averageFace = mean2.reshape(sz)
     
+
+    eVal, eigenVectors2 = cv2.eigen(covar, True)[1:]
+
+
+    print("eigenVectors 1")
+    print(len(eigenVectors))
+    print("eigenVectors 2")
+    print(len(eigenVectors2))
+
+    eigenFaces = []
+    for eigenVector in eigenVectors:
+            eigenFace = eigenVector.reshape(sz)
+            eigenFaces.append(eigenFace)
+
+    print("eigenFaces : ",len(eigenFaces))
+    print("eigenVectors2 : ",eigenVectors2[0])
+
     # create window for displaying Mean Face
     cv2.namedWindow("Result",cv2.WINDOW_AUTOSIZE)
     output = cv2.resize(averageFace,(0,0),fx=2,fy=2)
     cv2.imshow("Result",output)
+
+    x = (eigenVector[0]+eigenVector[1]+eigenVectors[2])
+    y = (eigenVector[0]+eigenVector[1]+eigenVector[2]+eigenVector[3]+eigenVector[4])
+
+    z = x/y
+    print("Vt0 ",x)
+    print("Vt1 ",y)
+    print("Z",z)
 
 
     cv2.waitKey(0)
