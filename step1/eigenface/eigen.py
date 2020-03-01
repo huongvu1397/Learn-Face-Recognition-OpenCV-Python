@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import os
+import matplotlib.pyplot as plt
 
 def createDataMatrix(images):
     print("Createing data matrix")
@@ -26,6 +27,31 @@ def createDataMatrix(images):
     print("DONE data")
     print(data)
     return data
+
+# Add the weighted eigen faces to the mean face     
+def createNewFace(*args):
+    # Start with the mean image
+    output = averageFace
+
+    # Add the eigen faces with the weights
+    for i in range(0, NUM_EIGEN_FACES):
+        '''
+        OpenCV does not allow slider values to be negative. 
+        So we use weight = sliderValue - MAX_SLIDER_VALUE / 2
+        ''' 
+        sliderValues[i] = cv2.getTrackbarPos("Weight" + str(i), "Trackbars");
+        weight = sliderValues[i] - MAX_SLIDER_VALUE/2
+        output = np.add(output, eigenFaces[i] * weight)
+
+    # Display Result at 2x size
+    output = cv2.resize(output, (0,0), fx=2, fy=2)
+    print("255op : ",output)
+    cv2.imshow("Result", output)
+
+def resetSliderValues(*args):
+    for i in range(0, NUM_EIGEN_FACES):
+        cv2.setTrackbarPos("Weight" + str(i), "Trackbars", int(MAX_SLIDER_VALUE/2));
+    createNewFace()
 
 def readImages(path):
         print("Reading images from "+ path)
@@ -60,16 +86,18 @@ def readImages(path):
         return images
 
 def createNewFace(*args):
-        #Start with the mean image
-        output = averageFace
-
-        #Add the eigen faces with the weights
-        for i in range(0,NUM_EIGEN_FACES):
-            weight = MAX_SLIDER_VALUE/2
-            output = np.add(output,eigenFaces[i] * weight)
-        #Display
-        output = cv2.resize(output,(0,0),fx=2,fy=2)
-        cv2.imshow("Result",output)
+    #Start with the mean image
+    output = averageFace
+    #Add the eigen faces with the weights
+    for i in range(0,NUM_EIGEN_FACES):
+        sliderValues[i] = cv2.getTrackbarPos("Weight" + str(i), "Trackbars");
+        weight = sliderValues[i] - MAX_SLIDER_VALUE/2
+        output = np.add(output,eigenFaces[i] * weight)
+    #Display
+    print("output")
+    print(len(output))
+    output = cv2.resize(output,(0,0),fx=2,fy=2)
+    cv2.imshow("Result",output)
     
 
 if __name__ == '__main__':
@@ -100,32 +128,42 @@ if __name__ == '__main__':
 
     eVal, eigenVectors2 = cv2.eigen(covar, True)[1:]
 
-
-    print("eigenVectors 1")
-    print(len(eigenVectors))
-    print("eigenVectors 2")
-    print(len(eigenVectors2))
-
     eigenFaces = []
     for eigenVector in eigenVectors:
             eigenFace = eigenVector.reshape(sz)
             eigenFaces.append(eigenFace)
 
-    print("eigenFaces : ",len(eigenFaces))
-    print("eigenVectors2 : ",eigenVectors2[0])
-
     # create window for displaying Mean Face
     cv2.namedWindow("Result",cv2.WINDOW_AUTOSIZE)
     output = cv2.resize(averageFace,(0,0),fx=2,fy=2)
+
     cv2.imshow("Result",output)
 
-    x = (eigenVector[0]+eigenVector[1]+eigenVectors[2])
-    y = (eigenVector[0]+eigenVector[1]+eigenVector[2]+eigenVector[3]+eigenVector[4])
+    # Create Window for trackbars
+    cv2.namedWindow("Trackbars", cv2.WINDOW_AUTOSIZE)
 
-    z = x/y
-    print("Vt0 ",x)
-    print("Vt1 ",y)
-    print("Z",z)
+    sliderValues = []
+	
+	# Create Trackbars
+    for i in range(0, NUM_EIGEN_FACES):
+        sliderValues.append(int(MAX_SLIDER_VALUE/2))
+        cv2.createTrackbar( "Weight" + str(i), "Trackbars", int(MAX_SLIDER_VALUE/2), MAX_SLIDER_VALUE, createNewFace)
+	
+    cv2.imshow("ok",eigenFaces[1])
+    cv2.imwrite("./step1/myfig.png",eigenFaces[1])
+    plt.imshow(eigenFaces[1],cmap=plt.cm.gray)
+    plt.imsave("eigen1.jpg",eigenFaces[0],cmap=plt.cm.gray)
+    plt.imsave("eigen2.jpg",eigenFaces[1],cmap=plt.cm.gray)
+    plt.imsave("eigen3.jpg",eigenFaces[2],cmap=plt.cm.gray)
+    plt.imsave("eigen4.jpg",eigenFaces[3],cmap=plt.cm.gray)
+    plt.imsave("eigen5.jpg",eigenFaces[4],cmap=plt.cm.gray)
+
+    plt.show()
+
+	# You can reset the sliders by clicking on the mean image.
+    cv2.setMouseCallback("Result", resetSliderValues)
+
+
 
 
     cv2.waitKey(0)

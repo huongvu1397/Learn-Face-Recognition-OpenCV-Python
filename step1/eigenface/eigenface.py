@@ -20,7 +20,7 @@ def createDataMatrix(images):
   
 	numImages = len(images)
 	sz = images[0].shape
-	data = np.zeros((numImages, sz[0] * sz[1] * sz[2]), dtype=np.float32)
+	data = np.zeros((numImages, sz[0] * sz[1]), dtype=np.float32)
 	for i in range(0, numImages):
 		image = images[i].flatten()
 		data[i,:] = image
@@ -39,7 +39,8 @@ def readImages(path):
 		if fileExt in [".jpg", ".jpeg"]:
 			# Add to array of images
 			imagePath = os.path.join(path, filePath)
-			im = cv2.imread(imagePath)
+			img = cv2.imread(imagePath)
+			im = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 			if im is None :
 				print("image:{} not read properly".format(imagePath))
