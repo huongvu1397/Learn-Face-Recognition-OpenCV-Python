@@ -112,7 +112,7 @@ def subplot ( title , images , rows , cols , sptitle ="", sptitles =[] , colorma
         im = np.asarray(images[i])
         print(len(im))
         #plt.write("./step1/eigens"+str(i)+".jpg")
-        plt.imsave("./step1/eigens"+str(i)+".jpg",im,cmap=colormap)
+        #plt.imsave("./step1/eigens"+str(i)+".jpg",im,cmap=colormap)
 
         plt.imshow(im , cmap = colormap)
         
@@ -134,13 +134,14 @@ if __name__ == '__main__':
      
     average_weight_matrix = np.reshape(as_row_matrix(X).mean( axis =0), X[0].shape)
     plt.imshow(average_weight_matrix, cmap=plt.cm.gray)
+    plt.imsave("./step1/train_mean.jpg",average_weight_matrix,cmap=plt.cm.gray)
     plt.title("Mean Face")
 
     [eigenvalues, eigenvectors, mean,nonSort ] = pca(as_row_matrix(X), y)
     E = []
-    number = nonSort.shape[1]
+    number = eigenvectors.shape[1]
     for i in range (min(number, 16)):
-        e = nonSort[:,i].reshape(X[0].shape )
+        e = eigenvectors[:,i].reshape(X[0].shape )
         E.append(np.asarray(e))
 
     # plot them and store the plot to " python_eigenfaces .pdf"

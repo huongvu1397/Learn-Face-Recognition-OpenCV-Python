@@ -65,7 +65,7 @@ def readImages(path):
                 print(imagePath)
                 iz = cv2.imread(imagePath)
                 im = cv2.cvtColor(iz, cv2.COLOR_BGR2GRAY)
-
+                plt.imsave("gray"+str(fileExt)+".jpg",im)
                 if im is None: 
                     print("image:{} no read properly".format(imagePath))
                 else :
