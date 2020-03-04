@@ -59,7 +59,7 @@ print("normalised:")
 a = normalised_training_tensor.T
 b = normalised_training_tensor
 ATA = np.mat(b) * np.mat(a)
-print("AA")
+print("ATA")
 print(ATA)
 
 eigenValues, eigenVectors = la.eig(ATA)
@@ -67,23 +67,39 @@ eigenValues, eigenVectors = la.eig(ATA)
 print(len(eigenValues))
 print(len(eigenVectors))
 print("eigenVector")
-for i in range(len(eigenVectors)):
-    print(eigenVectors[i])
+print(eigenVectors)
 print("eigenValues")
 for i in range(len(eigenValues)):
     print(eigenValues[i])
 
+Av = []
+
+for i in range(len(eigenVectors)):
+    temp =  a* (eigenVectors.T[i].T)
+    Av.append (temp)
+    avTemp = temp.T
+    normTemp = la.norm(avTemp)
+    print("calculate norm u["+str(i)+"]:")
+    print(avTemp/normTemp)
+    
+
+
 # calculate covariance matrix
 cov_matrix=np.cov(normalised_training_tensor)
+cov_matrix = np.divide(cov_matrix,25.0)
 print("COV_MATRIX")
 print(cov_matrix)
-#cov_matrix = np.divide(cov_matrix,25.0)
 print('Covariance Matrix Shape:', cov_matrix.shape)
 #print('Covariance matrix of X: \n%s' %cov_matrix)
 
 #eigenvalues and eigenvectors
 eigenvalues, eigenvectors, = np.linalg.eig(cov_matrix)
 print('eigenvalues.shape: {} eigenvectors.shape: {}'.format(eigenvalues.shape, eigenvectors.shape))
+print("eigenVectorX")
+print(eigenvectors)
+print("eigenValuesX")
+for i in range(len(eigenvalues)):
+    print(eigenvalues[i])
 
 eig_pairs = [(eigenvalues[index], eigenvectors[:,index]) for index in range(len(eigenvalues))]
 

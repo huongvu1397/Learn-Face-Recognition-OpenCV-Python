@@ -79,11 +79,20 @@ eigenValues, eigenVectors = la.eig(ATA)
 print(len(eigenValues))
 print(len(eigenVectors))
 print("eigenVector")
-for i in range(len(eigenVectors)):
-    print(eigenVectors[i])
+print(eigenVectors)
 print("eigenValues")
 for i in range(len(eigenValues)):
     print(eigenValues[i])
+
+Av = []
+
+for i in range(len(eigenVectors)):
+    temp =  a* (eigenVectors.T[i].T)
+    Av.append (temp)
+    avTemp = temp.T
+    normTemp = la.norm(avTemp)
+    print("calculate norm u["+str(i)+"]:")
+    print(avTemp/normTemp)
 
 
 
@@ -100,6 +109,12 @@ print('Covariance Matrix Shape:', cov_matrix.shape)
 #eigenvalues and eigenvectors
 eigenvalues, eigenvectors, = np.linalg.eig(cov_matrix)
 print('eigenvalues.shape: {} eigenvectors.shape: {}'.format(eigenvalues.shape, eigenvectors.shape))
+print("eigenVectorX")
+for i in range(len(eigenvectors)):
+    print(eigenvectors[i])
+print("eigenValuesX")
+for i in range(len(eigenvalues)):
+    print(eigenvalues[i])
 
 eig_pairs = [(eigenvalues[index], eigenvectors[:,index]) for index in range(len(eigenvalues))]
 
