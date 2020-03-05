@@ -60,6 +60,7 @@ for i in range(len(train_image_names)):
     img = normalised_training_tensor[i].reshape(height,width)
     plt.subplot(5,5,1+i)
     plt.imshow(img, cmap='gray')
+    plt.imsave("./temp/imgpi_"+str(i)+".jpg",img, cmap='gray')
     plt.tick_params(labelleft='off', labelbottom='off', bottom='off',top='off',right='off',left='off', which='both')
 plt.show()
 
