@@ -3,6 +3,7 @@ from matplotlib.image import imread
 import numpy as np
 import os
 from numpy import linalg as la
+import cv2
 
 
 TRAIN_IMG_FOLDER = './step1/imggray/'
@@ -65,8 +66,17 @@ for i in range(len(train_image_names)):
 plt.show()
 
 print("normalised:")
-a = normalised_training_tensor.T
-b = normalised_training_tensor
+data = normalised_training_tensor
+a = (data.T)
+print("A = ")
+print(a)
+print("type:")
+print(type(a))
+b = data
+
+plt.imshow(a)
+plt.show()
+
 ATA = np.mat(b) * np.mat(a)
 AAT = np.mat(a) * np.mat(b)
 print("ATA")
@@ -88,11 +98,11 @@ Av = []
 
 for i in range(len(eigenVectors)):
     temp =  a* (eigenVectors.T[i].T)
-    Av.append (temp)
     avTemp = temp.T
     normTemp = la.norm(avTemp)
     print("calculate norm u["+str(i)+"]:")
     print(avTemp/normTemp)
+    Av.append (temp)
 
 
 

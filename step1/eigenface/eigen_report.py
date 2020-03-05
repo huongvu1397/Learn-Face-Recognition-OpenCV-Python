@@ -21,19 +21,27 @@ for i in range(len(train_image_names)):
     training_tensor[i,:] = np.array(img, dtype='float64').flatten()
     plt.subplot(5,5,1+i)
     plt.imshow(img, cmap='gray')
+    print("img ["+str(i)+"]")
+    print(img)
     plt.tick_params(labelleft='off', labelbottom='off', bottom='off',top='off',right='off',left='off', which='both')
 plt.show()
 
 #calculate the mean face
 
 mean_face = np.zeros((1,height*width))
-print("MeanFace")
-print(mean_face)
 
 for i in training_tensor:
+    print(mean_face)
     mean_face = np.add(mean_face,i)
-
+print("mean_face_1")
+print(mean_face)
 mean_face = np.divide(mean_face,float(len(train_image_names))).flatten()
+print("mean_face_2")
+print(mean_face)
+mean_face = mean_face.astype(int)
+print("int")
+imgMean = mean_face.reshape(height, width)
+print(imgMean.shape)
 
 plt.imshow(mean_face.reshape(height, width), cmap='gray')
 plt.tick_params(labelleft='off', labelbottom='off', bottom='off',top='off',right='off',left='off', which='both')
@@ -58,9 +66,17 @@ plt.show()
 print("normalised:")
 a = normalised_training_tensor.T
 b = normalised_training_tensor
+AAT = np.mat(a) * np.mat(b)
 ATA = np.mat(b) * np.mat(a)
+print("A=")
+print(a)
+print("AAT")
+print(AAT)
+print(AAT.shape)
 print("ATA")
 print(ATA)
+print(ATA.shape)
+
 
 eigenValues, eigenVectors = la.eig(ATA)
 
@@ -69,6 +85,7 @@ print(len(eigenVectors))
 print("eigenVector")
 print(eigenVectors)
 print("eigenValues")
+eigenValues = eigenValues.astype(int)
 for i in range(len(eigenValues)):
     print(eigenValues[i])
 
@@ -78,9 +95,14 @@ for i in range(len(eigenVectors)):
     temp =  a* (eigenVectors.T[i].T)
     Av.append (temp)
     avTemp = temp.T
+    print("avTemp["+str(i)+"]")
+    print(avTemp)
+    print(avTemp.shape)
     normTemp = la.norm(avTemp)
     print("calculate norm u["+str(i)+"]:")
-    print(avTemp/normTemp)
+    avv = avTemp/normTemp
+    print(avv)
+    print(avv.shape)
     
 
 
