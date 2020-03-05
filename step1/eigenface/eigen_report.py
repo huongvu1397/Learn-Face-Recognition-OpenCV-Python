@@ -106,6 +106,27 @@ for i in range(len(eigenVectors)):
     print(avv.shape)
     
 
+print(eigenValues)
+print("cumsum:")
+print(np.cumsum(eigenValues))
+
+sorted_ind = sorted(range(eigenValues.shape[0]), key=lambda k: eigenValues[k], reverse=True)
+print("sorted:")
+print(sorted_ind)
+
+eigvalues_sort = eigenValues[sorted_ind]
+print("eigenSort:")
+print(eigvalues_sort)
+print("sum eigensort")
+print(sum(eigvalues_sort))
+
+leu = np.cumsum(eigvalues_sort)/sum(eigvalues_sort)
+
+# Show cumulative proportion of varaince with respect to components
+print("222222222222 Cumulative proportion of variance explained vector: \n%s" %leu)
+
+print("End Step")  
+#end step
 
 # calculate covariance matrix
 cov_matrix=np.cov(normalised_training_tensor)
