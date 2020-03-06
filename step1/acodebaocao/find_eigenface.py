@@ -84,6 +84,9 @@ for i in range(len(eigenVectors)):
     normI = la.norm(avI)
     #print("chuẩn hóa vector u["+str(i)+"]:")
     avv = avI/normI
+    print("not norm u["+str(i)+"] = : ",avI)
+    print("norm : u = :",avv)
+    print("normI : ",normI)
     u.append(avv)
 
 print("u:")
@@ -92,14 +95,33 @@ print(u[0])
 print("Tính toán cumsum...")
 print("sắp xếp theo chiều giảm dần các giá trị..")
 sorted_ind = sorted(range(eigenValues.shape[0]), key=lambda k: eigenValues[k], reverse=True)
-eigvalues_sort = eigenValues[sorted_ind]
+eigValues_sort = eigenValues[sorted_ind]
+eigVectors_sort = eigenVectors[sorted_ind]
 
-leu = np.cumsum(eigvalues_sort)/sum(eigvalues_sort)
+print("eig", eigenVectors)
+print("eig_sort", eigVectors_sort)
+
+leu = np.cumsum(eigValues_sort)/sum(eigValues_sort)
 
 # Show cumulative proportion of varaince with respect to components M'
 print("Cumulative proportion of variance explained vector: \n%s" %leu)
   
-#wi = 
+#wi =
+
+
+u_sort = []
+for i in range(len(eigVectors_sort)):
+    ei = eigVectors_sort.T[i].T
+    print("ei : ",ei)
+    temp =  a* (ei)
+    avI = temp.T
+    #u.append(avI)
+    # tính giá trị chuẩn hóa của av[i]
+    normI = la.norm(avI)
+    #print("chuẩn hóa vector u["+str(i)+"]:")
+    avv = avI/normI
+    print("not norm u["+str(i)+"] = : ",avI)
+    u_sort.append(avv)
 
 omg0 = []
 omg1 = []
@@ -108,12 +130,11 @@ omg3 = []
 omg4 = []
 #Chọn M' = 4 
 for i in range(4):
-    rsubmean = normalised_training_tensor[i].reshape(height,width)    
-    print(rsubmean)
+    rsubmean = normalised_training_tensor[i]
     wi = (u[i].T) * rsubmean
-    print(u[i].shape) 
-    print(rsubmean.shape)
     omg0.append(wi)
+
+ 
 
 print("w0:")
 print(omg0)
