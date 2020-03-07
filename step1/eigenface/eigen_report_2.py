@@ -139,6 +139,21 @@ eigvalues_sort = eigenvalues[sorted_ind]
 eigvectors_sort = eigenvectors[sorted_ind]
 train_set_files_sort = np.array(train_set_files)[sorted_ind]
 
+
+print("eigenvectors_sort")
+for i in range(len(eigenVectors)):
+    print(eigenVectors[i])
+
+print("eigvectors_sort")
+for i in range(len(eigvectors_sort)):
+    print(eigvectors_sort[i])
+
+eigenVectors_sort = eigenVectors[sorted_ind]
+
+print("eigenVectors_sort ------ real")
+for i in range(len(eigenVectors_sort)):
+    print(eigenVectors_sort[i])
+
 var_comp_sum = np.cumsum(eigvalues_sort)/sum(eigvalues_sort)
 
 # Show cumulative proportion of varaince with respect to components
@@ -154,6 +169,9 @@ plt.scatter(num_comp, var_comp_sum)
 plt.show()
 
 reduced_data = np.array(eigvectors_sort[:25]).transpose()
+print("reduced:")
+print(reduced_data)
+print(reduced_data.shape)
 reduced_data.shape
 
 print(training_tensor.transpose().shape, reduced_data.shape)

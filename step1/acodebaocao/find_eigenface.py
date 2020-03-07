@@ -98,21 +98,18 @@ sorted_ind = sorted(range(eigenValues.shape[0]), key=lambda k: eigenValues[k], r
 eigValues_sort = eigenValues[sorted_ind]
 eigVectors_sort = eigenVectors[sorted_ind]
 
-print("eig", eigenVectors)
-print("eig_sort", eigVectors_sort)
-
-leu = np.cumsum(eigValues_sort)/sum(eigValues_sort)
-
 # Show cumulative proportion of varaince with respect to components M'
+leu = np.cumsum(eigValues_sort)/sum(eigValues_sort)
 print("Cumulative proportion of variance explained vector: \n%s" %leu)
   
 #wi =
 
 
 u_sort = []
+
 for i in range(len(eigVectors_sort)):
     ei = eigVectors_sort.T[i].T
-    print("ei : ",ei)
+    print("ei : ",eigVectors_sort.T[i].T)
     temp =  a* (ei)
     avI = temp.T
     #u.append(avI)
@@ -120,8 +117,10 @@ for i in range(len(eigVectors_sort)):
     normI = la.norm(avI)
     #print("chuẩn hóa vector u["+str(i)+"]:")
     avv = avI/normI
-    print("not norm u["+str(i)+"] = : ",avI)
     u_sort.append(avv)
+
+print("eigValues_Sort : ")
+print(eigVectors_sort)
 
 omg0 = []
 omg1 = []
@@ -134,8 +133,6 @@ for i in range(4):
     wi = (u[i].T) * rsubmean
     omg0.append(wi)
 
- 
-
 print("w0:")
 print(omg0)
 
@@ -145,7 +142,7 @@ print(omg0)
 
 
 
-print("other")
+print("OTHER OTHER OTHER OTHER OTHER OTHER OTHER OTHER OTHER")
 
 
 
