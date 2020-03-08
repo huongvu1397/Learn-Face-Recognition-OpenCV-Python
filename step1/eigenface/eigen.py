@@ -65,7 +65,7 @@ def readImages(path):
                 print(imagePath)
                 iz = cv2.imread(imagePath)
                 im = cv2.cvtColor(iz, cv2.COLOR_BGR2GRAY)
-                plt.imsave("gray"+str(fileExt)+".jpg",im)
+
                 if im is None: 
                     print("image:{} no read properly".format(imagePath))
                 else :
@@ -152,6 +152,7 @@ if __name__ == '__main__':
     cv2.imshow("ok",eigenFaces[1])
     cv2.imwrite("./step1/myfig.png",eigenFaces[1])
     plt.imshow(eigenFaces[1],cmap=plt.cm.gray)
+    
     plt.imsave("eigen1.jpg",eigenFaces[0],cmap=plt.cm.gray)
     plt.imsave("eigen2.jpg",eigenFaces[1],cmap=plt.cm.gray)
     plt.imsave("eigen3.jpg",eigenFaces[2],cmap=plt.cm.gray)
