@@ -89,8 +89,13 @@ for i in range(len(eigenVectors)):
     avv = avI/normI
     u.append(avv)
 
+<<<<<<< HEAD
 for i in range(len(u)):
     print("ui norm : ",u[i])
+=======
+print("u:")
+print(u[0])
+>>>>>>> 7ed28a48d51a131271be87a3cbc214360dc64eaa
 
 print("Tính toán cumsum...")
 print("sắp xếp theo chiều giảm dần các giá trị..")
@@ -108,7 +113,11 @@ u_sort = []
 
 for i in range(len(eigVectors_sort)):
     ei = eigVectors_sort.T[i].T
+<<<<<<< HEAD
     #print("ei : ",eigVectors_sort.T[i].T)
+=======
+    print("ei : ",eigVectors_sort.T[i].T)
+>>>>>>> 7ed28a48d51a131271be87a3cbc214360dc64eaa
     temp =  a* (ei)
     avI = temp.T
     #u.append(avI)
@@ -118,9 +127,12 @@ for i in range(len(eigVectors_sort)):
     avv = avI/normI
     u_sort.append(avv)
 
+<<<<<<< HEAD
 for i in range(len(u_sort)):
     print("ui norm sort : ",u_sort[i])
 
+=======
+>>>>>>> 7ed28a48d51a131271be87a3cbc214360dc64eaa
 print("eigValues_Sort : ")
 print(eigVectors_sort)
 
@@ -134,27 +146,47 @@ for i in range(4):
     rsubmean = normalised_training_tensor[0].reshape(-1,1)
     print("rub : ",rsubmean.shape)
     print("u : ",eigenU[0].shape)
+<<<<<<< HEAD
     wi = (u_sort[i]) * rsubmean
+=======
+    wi = (u[i]) * rsubmean
+>>>>>>> 7ed28a48d51a131271be87a3cbc214360dc64eaa
     omg0.append(wi)
 
 for i in range(4):
     rsubmean = normalised_training_tensor[1].reshape(-1,1)
+<<<<<<< HEAD
     wi = (u_sort[i]) * rsubmean
+=======
+    wi = (u[i]) * rsubmean
+>>>>>>> 7ed28a48d51a131271be87a3cbc214360dc64eaa
     omg1.append(wi)
 
 for i in range(4):
     rsubmean = normalised_training_tensor[2].reshape(-1,1)
+<<<<<<< HEAD
     wi = (u_sort[i]) * rsubmean
+=======
+    wi = (u[i]) * rsubmean
+>>>>>>> 7ed28a48d51a131271be87a3cbc214360dc64eaa
     omg2.append(wi)
 
 for i in range(4):
     rsubmean = normalised_training_tensor[3].reshape(-1,1)
+<<<<<<< HEAD
     wi = (u_sort[i]) * rsubmean
+=======
+    wi = (u[i]) * rsubmean
+>>>>>>> 7ed28a48d51a131271be87a3cbc214360dc64eaa
     omg3.append(wi)
 
 for i in range(4):
     rsubmean = normalised_training_tensor[4].reshape(-1,1)
+<<<<<<< HEAD
     wi = (u_sort[i]) * rsubmean
+=======
+    wi = (u[i]) * rsubmean
+>>>>>>> 7ed28a48d51a131271be87a3cbc214360dc64eaa
     omg4.append(wi)
 
 print("omg0:",omg0)
@@ -169,15 +201,22 @@ print("omg4:",omg4)
 # End 
 
 
+<<<<<<< HEAD
 print("tính vector đặc trưng của ảnh")
 
 
+=======
+>>>>>>> 7ed28a48d51a131271be87a3cbc214360dc64eaa
 
 print("OTHER OTHER OTHER OTHER OTHER OTHER OTHER OTHER OTHER")
 
 
 
+<<<<<<< HEAD
 '''
+=======
+
+>>>>>>> 7ed28a48d51a131271be87a3cbc214360dc64eaa
 # calculate covariance matrix
 cov_matrix=np.cov(normalised_training_tensor)
 cov_matrix = np.divide(cov_matrix,25.0)
@@ -240,4 +279,7 @@ for i in range(proj_data.shape[0]):
     plt.imshow(img, cmap='gray')
     plt.tick_params(labelleft='off', labelbottom='off', bottom='off',top='off',right='off',left='off', which='both')
 plt.show()
+<<<<<<< HEAD
 '''
+=======
+>>>>>>> 7ed28a48d51a131271be87a3cbc214360dc64eaa
