@@ -76,17 +76,17 @@ eigenValues = eigenValues.astype(int)
 
 #u = A*v_i
 u = []
+eigenU = [] 
 for i in range(len(eigenVectors)):
     temp =  a* (eigenVectors.T[i].T)
     avI = temp.T
+    eigenU.append(avI)
     #u.append(avI)
+    print("avI = ",avI)
     # tính giá trị chuẩn hóa của av[i]
     normI = la.norm(avI)
     #print("chuẩn hóa vector u["+str(i)+"]:")
     avv = avI/normI
-    print("not norm u["+str(i)+"] = : ",avI)
-    print("norm : u = :",avv)
-    print("normI : ",normI)
     u.append(avv)
 
 print("u:")
@@ -103,7 +103,6 @@ leu = np.cumsum(eigValues_sort)/sum(eigValues_sort)
 print("Cumulative proportion of variance explained vector: \n%s" %leu)
   
 #wi =
-
 
 u_sort = []
 
@@ -129,12 +128,38 @@ omg3 = []
 omg4 = []
 #Chọn M' = 4 
 for i in range(4):
-    rsubmean = normalised_training_tensor[i]
-    wi = (u[i].T) * rsubmean
+    rsubmean = normalised_training_tensor[0].reshape(-1,1)
+    print("rub : ",rsubmean.shape)
+    print("u : ",eigenU[0].shape)
+    wi = (u[i]) * rsubmean
     omg0.append(wi)
 
-print("w0:")
-print(omg0)
+for i in range(4):
+    rsubmean = normalised_training_tensor[1].reshape(-1,1)
+    wi = (u[i]) * rsubmean
+    omg1.append(wi)
+
+for i in range(4):
+    rsubmean = normalised_training_tensor[2].reshape(-1,1)
+    wi = (u[i]) * rsubmean
+    omg2.append(wi)
+
+for i in range(4):
+    rsubmean = normalised_training_tensor[3].reshape(-1,1)
+    wi = (u[i]) * rsubmean
+    omg3.append(wi)
+
+for i in range(4):
+    rsubmean = normalised_training_tensor[4].reshape(-1,1)
+    wi = (u[i]) * rsubmean
+    omg4.append(wi)
+
+print("omg0:",omg0)
+print("omg1:",omg1)
+print("omg2:",omg2)
+print("omg3:",omg3)
+print("omg4:",omg4)
+
 
 #plt.imshow(omg0, cmap='gray')
 #plt.show()

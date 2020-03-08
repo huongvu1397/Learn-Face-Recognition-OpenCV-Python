@@ -23,13 +23,12 @@ train_image_names.append( np.array([(196,35,234),(232,59,244),(243,57,226)]))
 train_image_names.append( np.array([(255,223,224),(255,0,255),(249,255,235)]))
 
 training_tensor   = np.ndarray(shape=(len(train_image_names), height*width), dtype=np.float64)
-
-
-
+print("AAAA: training_tensor : ",training_tensor.shape)
 
 for i in range(len(train_image_names)):
     #img = plt.imread(TRAIN_IMG_FOLDER + train_image_names[i])
     training_tensor[i,:] = np.array(train_image_names[i], dtype='float64').flatten()
+    
 #    plt.subplot(5,5,1+i)
 #    plt.imshow(img, cmap='gray')
 #    plt.tick_params(labelleft='off', labelbottom='off', bottom='off',top='off',right='off',left='off', which='both')

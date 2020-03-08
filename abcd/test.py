@@ -96,7 +96,8 @@ def store_weights(k, zero_mean_face_matrix):
 
 	print(k_weights.shape)
 	k_weights = np.transpose(k_weights)
-	print(k_weights.shape)
+	print("k_weights:")
+	print(k_weights)
 	test_weights[k] = k_weights
 
 
@@ -237,12 +238,12 @@ def get_eig_vectors(zero_mean_face_matrix, mean_face_vec):
 
 
 
-size = 100
+size = 425
 # =============================================================
 #      						Training
 # =============================================================
 #train_path = "C:\Users\84974\Desktop\EigenFaces\Eigenfaces\Train"
-train_path = "C:\\Users\\84974\\Desktop\\EigenFaces\\Eigenfaces\\Huong"
+train_path = "C:\\Users\\84974\\Desktop\\EigenFaces\\Eigenfaces\\Train"
 train_img_list, train_file_dict, train_sub_dir, train_id_list = load_images(train_path)
 print(len(train_img_list))
 display_images(train_img_list, "Training Images")
