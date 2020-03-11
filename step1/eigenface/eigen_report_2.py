@@ -40,11 +40,9 @@ train_image_names.append( np.array([(255,223,224),(255,0,255),(249,255,235)]))
 train_image_names.append( np.array([(255,223,224),(255,0,255),(249,255,235)]))
 
 training_tensor   = np.ndarray(shape=(len(train_image_names), height*width), dtype=np.float64)
-<<<<<<< HEAD
+
 print("AAAA: training_tensor : ",training_tensor.shape)  
-=======
-print("AAAA: training_tensor : ",training_tensor.shape)
->>>>>>> 7ed28a48d51a131271be87a3cbc214360dc64eaa
+
 
 for i in range(len(train_image_names)):
     #img = plt.imread(TRAIN_IMG_FOLDER + train_image_names[i])
@@ -122,7 +120,6 @@ for i in range(len(eigenVectors)):
     avTemp = temp.T
     normTemp = la.norm(avTemp)
     print("calculate norm u["+str(i)+"]:")
-<<<<<<< HEAD
     Av.append (temp)
     AvNorm.append(avTemp/normTemp)
 
@@ -146,10 +143,7 @@ w2 = uinorm2 * p0
 print(w0)
 print(w1)
 print(w2)
-=======
-    print(avTemp/normTemp)
-    Av.append (temp)
->>>>>>> 7ed28a48d51a131271be87a3cbc214360dc64eaa
+ 
 
 print("2")
 w0 = uinorm0 * p1
