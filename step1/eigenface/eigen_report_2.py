@@ -17,53 +17,35 @@ print('Train Images:')
 train_image_names = os.listdir(TRAIN_IMG_FOLDER)
 
 train_image_names =[]
-train_image_names.append( np.array([(225,229,48),(251,33,238),(0,255,217)]))
-train_image_names.append( np.array([(10,219,24),(255,18,247),(17,255,2)]))
-train_image_names.append( np.array([(196,35,234),(232,59,244),(243,57,226)]))
-train_image_names.append( np.array([(255,223,224),(255,0,255),(249,255,235)]))
-train_image_names.append( np.array([(255,223,224),(255,0,255),(249,255,235)]))
-train_image_names.append( np.array([(255,223,224),(255,0,255),(249,255,235)]))
-train_image_names.append( np.array([(255,223,224),(255,0,255),(249,255,235)]))
-train_image_names.append( np.array([(225,229,48),(251,33,238),(0,255,217)]))
-train_image_names.append( np.array([(10,219,24),(255,18,247),(17,255,2)]))
-train_image_names.append( np.array([(196,35,234),(232,59,244),(243,57,226)]))
-train_image_names.append( np.array([(255,223,224),(255,0,255),(249,255,235)]))
-train_image_names.append( np.array([(255,223,224),(255,0,255),(249,255,235)]))
-train_image_names.append( np.array([(255,223,224),(255,0,255),(249,255,235)]))
-train_image_names.append( np.array([(255,223,224),(255,0,255),(249,255,235)]))
-train_image_names.append( np.array([(225,229,48),(251,33,238),(0,255,217)]))
-train_image_names.append( np.array([(10,219,24),(255,18,247),(17,255,2)]))
-train_image_names.append( np.array([(196,35,234),(232,59,244),(243,57,226)]))
-train_image_names.append( np.array([(255,223,224),(255,0,255),(249,255,235)]))
-train_image_names.append( np.array([(255,223,224),(255,0,255),(249,255,235)]))
-train_image_names.append( np.array([(255,223,224),(255,0,255),(249,255,235)]))
-train_image_names.append( np.array([(255,223,224),(255,0,255),(249,255,235)]))
+# ma trận 3x3 , số lượng 4
+train_image_names.append( np.array([(255,219,48),(19,25,232),(244,2,0)]))
+train_image_names.append( np.array([(10,229,234),(15,33,17),(0,0,226)]))
+train_image_names.append( np.array([(222,8,187),(67,45,255),(133,55,196)]))
+train_image_names.append( np.array([(67,255,0),(0,18,90),(78,190,234)]))
 
-training_tensor   = np.ndarray(shape=(len(train_image_names), height*width), dtype=np.float64)
+training_tensor = np.ndarray(shape=(len(train_image_names), height*width), dtype=np.float64)
 
-print("AAAA: training_tensor : ",training_tensor.shape)  
-
+M = len(train_image_names)
+print("Training Tensor Shape : ",training_tensor.shape)  
 
 for i in range(len(train_image_names)):
-    #img = plt.imread(TRAIN_IMG_FOLDER + train_image_names[i])
     training_tensor[i,:] = np.array(train_image_names[i], dtype='float64').flatten()
-    
-#    plt.subplot(5,5,1+i)
-#    plt.imshow(img, cmap='gray')
-#    plt.tick_params(labelleft='off', labelbottom='off', bottom='off',top='off',right='off',left='off', which='both')
-#plt.show()
 
-#calculate the mean face
+#calculate the mean face 
+# meanface (1,9)
 mean_face = np.zeros((1,height*width))
-print("MeanFace")
-print(mean_face)
 
 for i in training_tensor:
     mean_face = np.add(mean_face,i)
 
+# meanface (9,)
 mean_face = np.divide(mean_face,float(len(train_image_names))).flatten()
 
-plt.imshow(mean_face.reshape(height, width), cmap='gray')
+print("Show MeanFace: ")
+#reshape height x width
+imgMeanFace = mean_face.reshape(height, width)
+print("meanFace : ",imgMeanFace)
+plt.imshow(imgMeanFace, cmap='gray')
 plt.tick_params(labelleft='off', labelbottom='off', bottom='off',top='off',right='off',left='off', which='both')
 plt.show()
 
@@ -74,7 +56,6 @@ for i in range(len(train_image_names)):
     normalised_training_tensor[i] = np.subtract(training_tensor[i],mean_face)
     print(i)
     print(normalised_training_tensor[i].reshape(-1,1))
-
 
 for i in range(len(train_image_names)):
     img = normalised_training_tensor[i].reshape(height,width)

@@ -6,7 +6,9 @@ from numpy import linalg as la
 
 #thư mục training
 TRAIN_IMG_FOLDER = './step1/imggray/'
-TEST_IMG_FOLDER = './step1/imggray/'
+#thư mục ảnh test
+TEST_IMG_FOLDER = './code/convert_gray_image/data/1/'
+
 
 train_set_files = os.listdir(TRAIN_IMG_FOLDER)
 test_set_files = os.listdir(TEST_IMG_FOLDER)
@@ -14,14 +16,15 @@ test_set_files = os.listdir(TEST_IMG_FOLDER)
 width  = 100
 height = 100
 
-#list ảnh trong thư mục training
-print('Lấy list training images...')
+#lấy ảnh trong thư mục training
+#os.listdir : đọc tất cả các file trong folder nhưng chưa check định dạng
 train_image_names = os.listdir(TRAIN_IMG_FOLDER)
-#Ma trận 5x(100x100) type : float
-training_tensor   = np.ndarray(shape=(len(train_image_names), height*width), dtype=np.float64)
-print(training_tensor.shape)
-
-#hiển thị ảnh trong list train_image_names
+# train_image_names = ['gray1.jpg', 'gray2.jpg', 'gray3.jpg', 'gray4.jpg', 'gray5.jpg']
+# số lượng ảnh M 
+M = len(train_image_names)
+#Tạo ma trận M x (width x height) chuyển về định dạng float64   (5 hàng 10000 cột)
+training_tensor = np.ndarray(shape=(len(train_image_names), height*width), dtype=np.float64)
+print('hiển thị ảnh trong list train_image_names...')
 for i in range(len(train_image_names)):
     img = plt.imread(TRAIN_IMG_FOLDER + train_image_names[i])
     training_tensor[i,:] = np.array(img, dtype='float64').flatten()
@@ -30,8 +33,8 @@ for i in range(len(train_image_names)):
     plt.tick_params(labelleft='off', labelbottom='off', bottom='off',top='off',right='off',left='off', which='both')
 plt.show()
 
-print('Test Images:')
-test_image_names = os.listdir(TEST_IMG_FOLDER)#[i for i in dataset_dir if i not in train_image_names]
+print('hiển thị ảnh trong list test_image_names...')
+test_image_names = os.listdir(TEST_IMG_FOLDER)
 testing_tensor   = np.ndarray(shape=(len(test_image_names), height*width), dtype=np.float64)
 
 for i in range(len(test_image_names)):
@@ -68,7 +71,7 @@ normalised_training_tensor = np.ndarray(shape=(len(train_image_names), height*wi
 for i in range(len(train_image_names)):
     normalised_training_tensor[i] = np.subtract(training_tensor[i],mean_face)
     print(normalised_training_tensor[i].reshape(-1,1))
-#hiển thị ảnh sai khác
+print("Hiển thị ảnh sai khác...")
 for i in range(len(train_image_names)):
     img = normalised_training_tensor[i].reshape(height,width)
     plt.subplot(5,5,1+i)
@@ -77,11 +80,15 @@ for i in range(len(train_image_names)):
 plt.show()
 
 print("normalised:")
-#Ma trận A
+#Ma trận A (N^2 * M)  (10000,5)
 a = normalised_training_tensor.T
-#Ma trận A.T
+#Ma trận A.T (M* N^2) (5,10000)
 b = normalised_training_tensor
+#A*A.T  = 10000x5 * 5x10000 = 10000 x 10000 => ma trận rất lớn tìm cách khác
 AAT = np.mat(a) * np.mat(b)
+# A.T*A*vi = ui*vi
+# nhân 2 vế với A => (A * A.T* A * v1) = ui*A*vi  
+#A.T * A = 5x10000 * 10000x5 = 5x5 => 
 ATA = np.mat(b) * np.mat(a)
 
 #Tính trị riêng và vector riêng
@@ -211,7 +218,7 @@ print("tính vector đặc trưng của ảnh")
 
 
 
-print("OTHER OTHER OTHER OTHER OTHER OTHER OTHER OTHER OTHER")
+print("OTHER OTHER OTHER OTHER OTHER OTHER OTHER OTHER OTHER DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
 
 
 
@@ -428,22 +435,28 @@ def Visualization(img, train_image_names,proj_data,w, t0):
    
 
     
-    plt.subplot(40,2,1+count)
+    plt.subplot(10,2,1+count)
     if norms[index] < t0: # It's a face
-            
+        print("its a face")
         match = img.split('_')[0] == train_image_names[index].split('_')[0]
         #if img.split('.')[0] == train_image_names[index].split('.')[0]:
         if match:
+            print("match")
             #plt.title('Matched:'+'.'.join(train_image_names[index].split('.')[:2]), color='g')
             plt.title('Matched:', color='g')
             plt.imshow(imread(TRAIN_IMG_FOLDER+train_image_names[index]), cmap='gray')
                 
             correct_pred += 1
         else:
+            print("false match")
             #plt.title('Matched:'+'.'.join(train_image_names[index].split('.')[:2]), color='r')
             plt.title('False matched:', color='r')
+            print("file name : ",TRAIN_IMG_FOLDER+train_image_names[index])
             plt.imshow(imread(TRAIN_IMG_FOLDER+train_image_names[index]), cmap='gray')
+            correct_pred += 1
+
     else:
+        print("it unknow")       
         #if img.split('.')[0] not in [i.split('.')[0] for i in train_image_names] and img.split('.')[0] != 'apple':
         if img.split('_')[0] not in [i.split('_')[0] for i in train_image_names]:
             plt.title('Unknown face', color='g')
@@ -457,7 +470,7 @@ def Visualization(img, train_image_names,proj_data,w, t0):
     count+=1
 
     
-fig = plt.figure(figsize=(5, 30))
+fig = plt.figure(figsize=(5, 10))
 
 test_image_names2 = sorted(test_image_names)
 for i in range(len(test_image_names2)):
