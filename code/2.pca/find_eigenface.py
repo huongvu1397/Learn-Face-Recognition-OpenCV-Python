@@ -93,7 +93,10 @@ ATA = np.mat(b) * np.mat(a)
 #Tính trị riêng và vector riêng của ma trận A.T*A (MxM)
 print("Tính trị riêng và vector riêng của ma trận A.T *A ...")
 eigenValues, eigenVectors = la.eig(ATA)
-eigenValues = eigenValues
+for i in range(len(eigenVectors)):
+    print("eigenvectors : ",eigenVectors[i])
+for i in range(len(eigenValues)):
+    print("eigenvalue : ",eigenValues[i])
 
 print("A*v_i là eigenvector của C")
 u = []

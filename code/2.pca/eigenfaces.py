@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
 
-IMAGE_DIR = './step1/imgdata/'
+IMAGE_DIR = './step1/imggray_folder/'
 # N = DEFAULT_SIZE = 100
 DEFAULT_SIZE = [100, 100] 
 
@@ -39,7 +39,7 @@ def as_row_matrix (X):
     mat = np. empty ((0 , X [0].size ), dtype =X [0]. dtype )
     for row in X:
         mat = np.vstack(( mat , np.asarray( row ).reshape(1 , -1))) # 1 x N*N 
-    return mat   
+    return mat  
 
 # Compute the mean face 
 # vector trung bình gồm giá trị kỳ vòng của từng biến 
@@ -72,35 +72,56 @@ plt.show()
 
 def get_number_of_components_to_preserve_variance(eigenvalues, variance=.95):
     for ii, eigen_value_cumsum in enumerate(np.cumsum(eigenvalues) / np.sum(eigenvalues)):
+        print("eigen_value_cumsum : ",eigen_value_cumsum)
         if eigen_value_cumsum > variance:
-            return ii
+            return ii+1
 
 def pca (X, y, num_components =0):
-    [n,d] = X.shape
+    #5x 10000
+    [n,d] = X.shape 
     if ( num_components <= 0) or ( num_components >n):
         num_components = n
-        mu = X.mean( axis =0)
-        X = X - mu
+        mu = X.mean( axis =0).astype(int)
+        X = (X - mu ).astype(int)
     if n>d:
-        C = np.dot(X.T,X) # Covariance Matrix
-        [ eigenvalues , eigenvectors ] = np.linalg.eigh(C)
+        print("n>d")
+        C = np.dot(X.T,X).astype(int) # Covariance Matrix
+        [ eigenvalues , eigenvectors ] = np.linalg.eig(C)
     else :
-        C = np.dot (X,X.T) # Covariance Matrix
-        [ eigenvalues , eigenvectors ] = np.linalg.eigh(C)
+        print("n<d")
+        C = np.dot (X,X.T).astype(int) # Covariance Matrix
+        [ eigenvalues , eigenvectors ] = np.linalg.eig(C)
+        for i in range(len(eigenvectors)):
+            print("eigenvectors : ",eigenvectors[i])
+        for i in range(len(eigenvalues)):
+            print("eigenvalue : ",eigenvalues[i])
+        
         eigenvectors = np.dot(X.T, eigenvectors )
+        # chuẩn hóa 
         for i in range (n):
             eigenvectors [:,i] = eigenvectors [:,i]/ np.linalg.norm( eigenvectors [:,i])
+
+    print("ma trận X : ",X)
+    print("ma trận C : ",C)
+
+        
+
     # sort eigenvectors descending by their eigenvalue
+    print("Sort--------------------------")
     idx = np.argsort (- eigenvalues )
     eigenvalues = eigenvalues [idx ]
     eigenvectors = eigenvectors [:, idx ]
+    print("eigenvector : ",eigenvectors)
+    for i in range(len(eigenvalues)):
+            print("eigenvalue : ",eigenvalues[i])
     num_components = get_number_of_components_to_preserve_variance(eigenvalues)
+    print("num components : ", num_components)
     # select only num_components
     eigenvalues = eigenvalues [0: num_components ].copy ()
     eigenvectors = eigenvectors [: ,0: num_components ].copy ()
     return [ eigenvalues , eigenvectors , mu]  
 
-[eigenvalues, eigenvectors, mean] = pca (as_row_matrix(X), y)
+[eigenvalues, eigenvectors, mean] = pca (as_row_matrix(X).astype(int), y)
 
 # eigenfaces với giá trị riêng cao nhất được tính bằng tập huấn luyện. 
 # Chúng được gọi là ghost faces. ĐƯợc hiển thị bởi các hình dưới.
@@ -156,28 +177,29 @@ plt.show()
 
 #reconstruct 
 
-def project (W , X , mu):
+#Ω_k^T
+def project(W , X , mu):
     return np.dot (X - mu , W)
 def reconstruct (W , Y , mu) :
     return np.dot (Y , W.T) + mu
 
 #reconstruct ảnh đầu tiên
 
-[X_small, y_small] = read_images(image_path="./step1/imgdata/") 
-[eigenvalues_small, eigenvectors_small, mean_small] = pca (as_row_matrix(X_small), y_small)
+# [X_small, y_small] = read_images(image_path="./step1/imgdata/") 
+# [eigenvalues_small, eigenvectors_small, mean_small] = pca (as_row_matrix(X_small), y_small)
 
-steps =[i for i in range (eigenvectors_small.shape[1])]
-E = []
-for i in range (len(steps)):
-    numEvs = steps[i]
-    P = project(eigenvectors_small[: ,0: numEvs ], X_small[0].reshape (1 , -1) , mean_small)
-    R = reconstruct(eigenvectors_small[: ,0: numEvs ], P, mean_small)
-    # reshape and append to plots
-    R = R.reshape(X_small[0].shape )
-    E.append(np.asarray(R))
-subplot ( title ="Reconstruction", images =E, rows =4, cols =4, 
-         sptitle ="Eigenvectors ", sptitles =steps , colormap =plt.cm.gray , filename ="python_pca_reconstruction.png")
-plt.show()
+# steps =[i for i in range (eigenvectors_small.shape[1])]
+# E = []
+# for i in range (len(steps)):
+#     numEvs = steps[i]
+#     P = project(eigenvectors_small[: ,0: numEvs ], X_small[0].reshape (1 , -1) , mean_small)
+#     R = reconstruct(eigenvectors_small[: ,0: numEvs ], P, mean_small)
+#     # reshape and append to plots
+#     R = R.reshape(X_small[0].shape )
+#     E.append(np.asarray(R))
+# subplot ( title ="Reconstruction", images =E, rows =4, cols =4, 
+#          sptitle ="Eigenvectors ", sptitles =steps , colormap =plt.cm.gray , filename ="python_pca_reconstruction.png")
+# plt.show()
 
 # Face Recognition using Eigenfaces
 # bây giờ chúng ta sẽ dùng thuật toán để phát hiện khuôn mặt trong hình ảnh unknown image. Trong quá trình nhận dạng, một eigenface được hình thành
@@ -195,31 +217,68 @@ plt.show()
 # hay căn bậc 2 của tổng (qi -pi)^2  i -> 1.. n
 
 
+# p = Ω_k^T train , q = Ω_k^T test
+
 def dist_metric(p,q):
     p = np.asarray(p).flatten()
     q = np.asarray (q).flatten()
-    return np.sqrt (np.sum (np. power ((p-q) ,2)))
+    print("p = ",p)
+    print("q = ",q)
+    print("p-q = ", ((p-q)))
+    print("p-q ^2 = ",np. power ((p-q) ,2))
+    result = np.sqrt (np.sum (np. power ((p-q) ,2)))
+    print("ressult : ",result)
+    return result
 
 def predict (W, mu , projections, y, X):
     minDist = float("inf")
+    print("minDist = ",minDist)
     minClass = -1
+    print("minClass = ",minClass)
     Q = project (W, X.reshape (1 , -1) , mu)
+    print("Q : ",Q)
     for i in range (len(projections)):
         dist = dist_metric( projections[i], Q)
+        print("dist :",dist)
         if dist < minDist:
             minDist = dist
             minClass = i
     return minClass
+#Tính Omk.T
+
 
 projections = []
+# xi - ảnh
 for xi in X:
-    projections.append(project (eigenvectors, xi.reshape(1 , -1) , mean))
+    tempProjections = project (eigenvectors, xi.reshape(1 , -1) , mean)
+    print("Ω_k^T : ",tempProjections)
+    projections.append(tempProjections)
 
-image = Image.open("./code/convert_gray_image/data/1/0.jpg")
+# ảnh mới
+image = Image.open("./step1/imgtest/hung.jpg")
 image = image.convert ("L")
 if (DEFAULT_SIZE is not None ):
     image = image.resize (DEFAULT_SIZE , Image.ANTIALIAS )
 test_image = np. asarray (image , dtype =np. uint8 )
+print("test_image ",test_image)
+print("test_image ",test_image.reshape(1,-1))
+print("mean ",mean)
+skImage = (test_image.reshape(1,-1) - mean).reshape(test_image.shape)
+print("Φ_i=Γ_i-Ψ",skImage)
+plt.imshow(skImage,plt.cm.gray)
+#plt.imsave("./temp/img_test_thuy.jpg",skImage,cmap='gray')
+plt.show()
+
+# chiếu lên không gian M' chiều
+# Φ_i
+Z = project (eigenvectors, test_image.reshape (1 , -1) , mean)
+print("Z 0 : ",Z)
+print("project 0  ",(projections[0])[0])
+print("uuuuu ",eigenvectors [:,0])
+Xz = -999.0496985 * eigenvectors [:,0].T
+print("Xz",Xz)
+
+
 predicted = predict(eigenvectors, mean , projections, y, test_image)
 
 subplot ( title ="Prediction", images =[test_image, X[predicted]], rows =1, cols =2, 

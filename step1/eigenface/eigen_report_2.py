@@ -18,10 +18,10 @@ train_image_names = os.listdir(TRAIN_IMG_FOLDER)
 
 train_image_names =[]
 # Ma trận 3x3 , số lượng 4
-train_image_names.append( np.array([(255,219,48),(19,25,232),(244,2,0)]))
-train_image_names.append( np.array([(10,229,234),(15,33,17),(0,0,226)]))
-train_image_names.append( np.array([(222,8,187),(67,45,255),(133,55,196)]))
-train_image_names.append( np.array([(67,255,0),(0,18,90),(78,190,234)]))
+train_image_names.append( np.array([(225,229,48),(251,33,238),(0,255,217)]))
+train_image_names.append( np.array([(10,219,24),(255,18,247),(17,255,2)]))
+train_image_names.append( np.array([(196,35,234),(232,59,244),(243,57,226)]))
+train_image_names.append( np.array([(255,223,224),(255,0,255),(249,255,235)]))
 
 training_tensor = np.ndarray(shape=(len(train_image_names), height*width), dtype=np.float64)
 
@@ -83,7 +83,12 @@ print(ATA)
 #print("AAT")
 #print(AAT)
 
-eigenValues, eigenVectors = la.eig(ATA)
+eigenValues, eigenVectors = la.eigh(ATA)
+#eigenVector
+#[[-0.5         0.63980101  0.52099551 -0.2630938 ]
+# [-0.5        -0.31436161 -0.43652963 -0.67868893]
+# [-0.5         0.30572242 -0.55916539  0.58640247]
+# [-0.5        -0.63116183  0.47469951  0.35538025]]
 
 print(len(eigenValues))
 print(len(eigenVectors))
@@ -235,3 +240,4 @@ for i in range(proj_data.shape[0]):
     plt.tick_params(labelleft='off', labelbottom='off', bottom='off',top='off',right='off',left='off', which='both')
 plt.show()
 '''
+

@@ -287,6 +287,7 @@ for i in range(proj_data.shape[0]):
 plt.show()
 
 w = np.array([np.dot(proj_data,i) for i in normalised_training_tensor])
+print("w la gi")
 print(w.shape)
 
 def recogniser(test_image_names, train_image_names,proj_data,w, t0=2e8, prn=False):
@@ -428,9 +429,16 @@ def Visualization(img, train_image_names,proj_data,w, t0):
     count+=1
     
     w_unknown = np.dot(proj_data, normalised_uface_vector)
+    print("proj data : ",proj_data)
+    print("normalised_uface_vector : ",normalised_uface_vector)
+    print(w.shape) # 5,5
+    print(w_unknown.shape) # 5,
     diff  = w - w_unknown
     norms = np.linalg.norm(diff, axis=1)
     index = np.argmin(norms)
+    print(diff.shape) # 5,5
+    print(norms.shape)# (5,)
+    print(index)
     
    
 
