@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
 
-IMAGE_DIR = './step1/imggray_folder/'
+IMAGE_DIR = './data/img_train_10/'
 # N = DEFAULT_SIZE = 100
 DEFAULT_SIZE = [100, 100] 
 
@@ -67,9 +67,6 @@ plt.show()
 #      . n = số lượng hình ảnh, k < n : với công thức get_number_of_components_to_preserve_variance so sánh với 0.95.
 # y = W.T (x- mean)  trong đó W = (v1,v2,... vk)
 
-
-
-
 def get_number_of_components_to_preserve_variance(eigenvalues, variance=.95):
     for ii, eigen_value_cumsum in enumerate(np.cumsum(eigenvalues) / np.sum(eigenvalues)):
         print("eigen_value_cumsum : ",eigen_value_cumsum)
@@ -103,8 +100,6 @@ def pca (X, y, num_components =0):
 
     print("ma trận X : ",X)
     print("ma trận C : ",C)
-
-        
 
     # sort eigenvectors descending by their eigenvalue
     print("Sort--------------------------")
@@ -184,7 +179,6 @@ def reconstruct (W , Y , mu) :
     return np.dot (Y , W.T) + mu
 
 #reconstruct ảnh đầu tiên
-
 # [X_small, y_small] = read_images(image_path="./step1/imgdata/") 
 # [eigenvalues_small, eigenvectors_small, mean_small] = pca (as_row_matrix(X_small), y_small)
 
@@ -215,20 +209,20 @@ def reconstruct (W , Y , mu) :
 #  Khoảng cách Euclidean giữa các điểm p và q là độ dài của đoạn thằng nối chúng 
 # d(p,q) = căn bậc 2 của [ ( q1-p1)^2  + (q2 -p1)^2 .... + (qn -pn)^2 ]  
 # hay căn bậc 2 của tổng (qi -pi)^2  i -> 1.. n
-
-
 # p = Ω_k^T train , q = Ω_k^T test
+
+# result array
 
 def dist_metric(p,q):
     p = np.asarray(p).flatten()
     q = np.asarray (q).flatten()
-    print("p = ",p)
-    print("q = ",q)
-    print("p-q = ", ((p-q)))
-    print("p-q ^2 = ",np. power ((p-q) ,2))
+    #print("p = ",p)
+    #print("q = ",q)
+    #print("p-q = ", ((p-q)))
     result = np.sqrt (np.sum (np. power ((p-q) ,2)))
-    print("ressult : ",result)
+    print("result : ",result)
     return result
+
 
 def predict (W, mu , projections, y, X):
     minDist = float("inf")
@@ -239,10 +233,26 @@ def predict (W, mu , projections, y, X):
     print("Q : ",Q)
     for i in range (len(projections)):
         dist = dist_metric( projections[i], Q)
-        print("dist :",dist)
         if dist < minDist:
             minDist = dist
             minClass = i
+    return minClass
+
+resArray = []
+def predictWithThreshold(W,mu,projections,y,X):
+    minClass = -1
+    Q = project (W, X.reshape (1 , -1) , mu)
+    for i in range(len(projections)) :
+        dist = dist_metric(projections[i],Q)
+        resArray.append(dist)
+    threshHold = 0.5 * max(resArray)
+    print("Threshold = ",threshHold)
+    for i in range(len(resArray)):
+        if resArray[i] < threshHold :
+            minClass = i
+            print("True Face")
+        else :
+            print("Fasle Face")
     return minClass
 #Tính Omk.T
 
@@ -255,8 +265,8 @@ for xi in X:
     projections.append(tempProjections)
 
 # ảnh mới
-image = Image.open("./step1/imgtest/hung.jpg")
-image = image.convert ("L")
+image = Image.open("./data/imgtest_5/thuy.jpg")
+image = image.convert("L")
 if (DEFAULT_SIZE is not None ):
     image = image.resize (DEFAULT_SIZE , Image.ANTIALIAS )
 test_image = np. asarray (image , dtype =np. uint8 )
@@ -265,21 +275,17 @@ print("test_image ",test_image.reshape(1,-1))
 print("mean ",mean)
 skImage = (test_image.reshape(1,-1) - mean).reshape(test_image.shape)
 print("Φ_i=Γ_i-Ψ",skImage)
+plt.title("test image") 
 plt.imshow(skImage,plt.cm.gray)
 #plt.imsave("./temp/img_test_thuy.jpg",skImage,cmap='gray')
 plt.show()
 
 # chiếu lên không gian M' chiều
 # Φ_i
-Z = project (eigenvectors, test_image.reshape (1 , -1) , mean)
-print("Z 0 : ",Z)
-print("project 0  ",(projections[0])[0])
-print("uuuuu ",eigenvectors [:,0])
-Xz = -999.0496985 * eigenvectors [:,0].T
-print("Xz",Xz)
 
-
-predicted = predict(eigenvectors, mean , projections, y, test_image)
+#predicted = predict(eigenvectors, mean , projections, y, test_image)
+predicted = predictWithThreshold(eigenvectors,mean,projections,y,test_image)
+print("predicted : ",predicted)
 
 subplot ( title ="Prediction", images =[test_image, X[predicted]], rows =1, cols =2, 
          sptitles = ["Unknown image", "Prediction :{0}".format(y[predicted])] , colormap =plt.cm.gray , 
