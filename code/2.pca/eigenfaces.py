@@ -175,6 +175,7 @@ plt.show()
 #Ω_k^T
 def project(W , X , mu):
     return np.dot (X - mu , W)
+
 def reconstruct (W , Y , mu) :
     return np.dot (Y , W.T) + mu
 
@@ -213,15 +214,32 @@ def reconstruct (W , Y , mu) :
 
 # result array
 
+# khoảng cách euclid 
 def dist_metric(p,q):
     p = np.asarray(p).flatten()
     q = np.asarray (q).flatten()
-    #print("p = ",p)
-    #print("q = ",q)
+    print("p = ",p)
+    print("q = ",q)
     #print("p-q = ", ((p-q)))
     result = np.sqrt (np.sum (np. power ((p-q) ,2)))
     print("result : ",result)
     return result
+
+def calculate_mahalanobis(p,q):
+    p = np.asarray(p).flatten()
+    q = np.asarray (q).flatten()
+    for i in range(len(eigenvalues)):
+        print(eigenvalues[i])
+    return 0
+
+
+# khoảng cách Mahalanobis
+def dist_mahalanobis (W,mu,projections,X):
+    A = project (W, X.reshape (1 , -1) , mu)
+    for i in range (len(projections)):
+        dist = calculate_mahalanobis(projections[i],A)
+        #print(dist)
+
 
 
 def predict (W, mu , projections, y, X):
@@ -247,6 +265,7 @@ def predictWithThreshold(W,mu,projections,y,X):
         resArray.append(dist)
     threshHold = 0.5 * max(resArray)
     print("Threshold = ",threshHold)
+    # check its a face ??
     for i in range(len(resArray)):
         if resArray[i] < threshHold :
             minClass = i
@@ -256,26 +275,36 @@ def predictWithThreshold(W,mu,projections,y,X):
     return minClass
 #Tính Omk.T
 
-
 projections = []
-# xi - ảnh
-for xi in X:
+
+#Φ^  = wi *ui   wi = tempProjections[i]  ui = eigenvectors[i]
+
+
+
+# xi is ảnh
+for index, xi in enumerate(X,start = 0):
     tempProjections = project (eigenvectors, xi.reshape(1 , -1) , mean)
-    print("Ω_k^T : ",tempProjections)
+    print("index : ",index)
+    print("Ω_k^T : ",tempProjections.shape)
+    #print("ui : ",eigenvectors)
+    #print("ui : ",eigenvectors.shape)
+    #print("ui : ",eigenvectors[:,index].shape)
     projections.append(tempProjections)
 
+
+
 # ảnh mới
-image = Image.open("./data/imgtest_5/thuy.jpg")
+image = Image.open("./data/imgtest_5/hung.jpg")
 image = image.convert("L")
 if (DEFAULT_SIZE is not None ):
-    image = image.resize (DEFAULT_SIZE , Image.ANTIALIAS )
-test_image = np. asarray (image , dtype =np. uint8 )
+    image = image.resize(DEFAULT_SIZE , Image.ANTIALIAS )
+test_image = np.asarray(image,dtype =np.uint8)
 print("test_image ",test_image)
 print("test_image ",test_image.reshape(1,-1))
 print("mean ",mean)
 skImage = (test_image.reshape(1,-1) - mean).reshape(test_image.shape)
 print("Φ_i=Γ_i-Ψ",skImage)
-plt.title("test image") 
+plt.title("test image")
 plt.imshow(skImage,plt.cm.gray)
 #plt.imsave("./temp/img_test_thuy.jpg",skImage,cmap='gray')
 plt.show()
@@ -285,9 +314,14 @@ plt.show()
 
 #predicted = predict(eigenvectors, mean , projections, y, test_image)
 predicted = predictWithThreshold(eigenvectors,mean,projections,y,test_image)
+dist_mahalanobis(eigenvectors,mean,projections,test_image)
 print("predicted : ",predicted)
+if predicted != -1:
+    subplot(title ="Prediction", images =[test_image, X[predicted]], rows =1, cols =2, 
+            sptitles = ["Unknown image", "Prediction :{0}".format(y[predicted])] , colormap=plt.cm.gray, 
+            filename ="prediction_test.png", figsize = (5,5))
+else:
+    plt.title("Unknown images")
+    plt.imshow(test_image,plt.cm.gray)
 
-subplot ( title ="Prediction", images =[test_image, X[predicted]], rows =1, cols =2, 
-         sptitles = ["Unknown image", "Prediction :{0}".format(y[predicted])] , colormap =plt.cm.gray , 
-         filename ="prediction_test.png", figsize = (5,5))
 plt.show()
