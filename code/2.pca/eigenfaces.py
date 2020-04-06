@@ -2,6 +2,10 @@ import os
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
+from scipy.spatial import distance
+from numpy.linalg import inv
+import math
+
 
 IMAGE_DIR = './data/img_train_10/'
 # N = DEFAULT_SIZE = 100
@@ -72,6 +76,7 @@ def get_number_of_components_to_preserve_variance(eigenvalues, variance=.95):
         print("eigen_value_cumsum : ",eigen_value_cumsum)
         if eigen_value_cumsum > variance:
             return ii+1
+        
 
 def pca (X, y, num_components =0):
     #5x 10000
@@ -114,9 +119,9 @@ def pca (X, y, num_components =0):
     # select only num_components
     eigenvalues = eigenvalues [0: num_components ].copy ()
     eigenvectors = eigenvectors [: ,0: num_components ].copy ()
-    return [ eigenvalues , eigenvectors , mu]  
+    return [ eigenvalues , eigenvectors , mu,C]  
 
-[eigenvalues, eigenvectors, mean] = pca (as_row_matrix(X).astype(int), y)
+[eigenvalues, eigenvectors, mean,Cov] = pca (as_row_matrix(X).astype(int), y)
 
 # eigenfaces với giá trị riêng cao nhất được tính bằng tập huấn luyện. 
 # Chúng được gọi là ghost faces. ĐƯợc hiển thị bởi các hình dưới.
@@ -225,20 +230,6 @@ def dist_metric(p,q):
     print("result : ",result)
     return result
 
-def calculate_mahalanobis(p,q):
-    p = np.asarray(p).flatten()
-    q = np.asarray (q).flatten()
-    for i in range(len(eigenvalues)):
-        print(eigenvalues[i])
-    return 0
-
-
-# khoảng cách Mahalanobis
-def dist_mahalanobis (W,mu,projections,X):
-    A = project (W, X.reshape (1 , -1) , mu)
-    for i in range (len(projections)):
-        dist = calculate_mahalanobis(projections[i],A)
-        #print(dist)
 
 
 
@@ -263,6 +254,7 @@ def predictWithThreshold(W,mu,projections,y,X):
     for i in range(len(projections)) :
         dist = dist_metric(projections[i],Q)
         resArray.append(dist)
+    print("Q : ",Q)
     threshHold = 0.5 * max(resArray)
     print("Threshold = ",threshHold)
     # check its a face ??
@@ -286,15 +278,12 @@ for index, xi in enumerate(X,start = 0):
     tempProjections = project (eigenvectors, xi.reshape(1 , -1) , mean)
     print("index : ",index)
     print("Ω_k^T : ",tempProjections.shape)
-    #print("ui : ",eigenvectors)
-    #print("ui : ",eigenvectors.shape)
-    #print("ui : ",eigenvectors[:,index].shape)
     projections.append(tempProjections)
 
 
 
 # ảnh mới
-image = Image.open("./data/imgtest_5/hung.jpg")
+image = Image.open("./data/imgtest_5/thuy.jpg")
 image = image.convert("L")
 if (DEFAULT_SIZE is not None ):
     image = image.resize(DEFAULT_SIZE , Image.ANTIALIAS )
@@ -314,7 +303,6 @@ plt.show()
 
 #predicted = predict(eigenvectors, mean , projections, y, test_image)
 predicted = predictWithThreshold(eigenvectors,mean,projections,y,test_image)
-dist_mahalanobis(eigenvectors,mean,projections,test_image)
 print("predicted : ",predicted)
 if predicted != -1:
     subplot(title ="Prediction", images =[test_image, X[predicted]], rows =1, cols =2, 
@@ -325,3 +313,61 @@ else:
     plt.imshow(test_image,plt.cm.gray)
 
 plt.show()
+
+# wi-w_i^k
+def calculate_maha_1(p,q):
+    p = np.asarray(p).flatten()
+    q = np.asarray (q).flatten()
+    res1 = p-q
+    print("rest 1 : ",res1)
+    return res1
+
+def calculate_maha_2(p,q):
+    p = np.asarray(p).flatten()
+    q = np.asarray (q).flatten()
+    res2 = p*q
+    print("rest 2 : ",res2)
+    return res2
+
+def mahalanobit_distance(mTestImage,mEigenvector,mEigenvalues,mMean,mProjections,C):
+    print("test_image : ",mTestImage)
+    Test_Q = project (mEigenvector, mTestImage.reshape (1 , -1) , mMean)
+    print("Test Q : ", Test_Q)
+    print("eigenvector: ",mEigenvector)
+    print("eigenvalues : ",mEigenvalues)
+    print("projection các ảnh trong tập training... ")
+    for i in range(len(mProjections)):
+        print("projection i : ",mProjections[i])
+        wwk =calculate_maha_1(mProjections[i],Test_Q)
+        xxx = 0 
+        for z in range(len(wwk)):
+            #print("mprojection shape : ",mProjections[z].shape)
+            #print("Test_Q shape : ",Test_Q.shape)
+            #print("eigenvalue ",mEigenvalues[z])
+            #print("eigenvalue ",Cov.shape)
+            #print("wwk ",wwk[z])
+        
+            #result = np.sqrt (np.sum (np. power ((p-q) ,2)))
+            #xxx += (1/mEigenvalues[i])* (np.power(wwk[i],2))
+            #xxx += (1/np.sqrt(mEigenvalues[i]))* (np.power(wwk[i],2))
+            #xxx = np.sqrt(  wwk[i].T * C * wwk[i]   )
+            #xxx += (1/np.sqrt(mEigenvalues[z])) * (wwk[z])
+            #xxx = distance.mahalanobis(mProjections[i], Test_Q, inv(C))
+            # 2 công thức này
+            #xxx += (1/np.sqrt(mEigenvalues[z])) * (np.power(wwk[z],2))
+            #print("count xxx = ",(1/mEigenvalues[z]) * (np.power(wwk[z],2)))
+            xxx += (1/mEigenvalues[z]) * (np.power(wwk[z],2))
+            
+
+        #print("xxx sqrt : ",math.sqrt(xxx))
+        print("xxx ------------------------------------------------------- : ",xxx)
+        
+
+
+print("Mahalanobis calculate...")
+# progress testimage 
+mahalanobit_distance(test_image,eigenvectors,eigenvalues,mean,projections,Cov)
+
+
+
+
