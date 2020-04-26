@@ -7,9 +7,9 @@ from numpy.linalg import inv
 import math
 
 
-IMAGE_DIR = './data/img_train_10/'
+IMAGE_DIR = './data/Training_dataset/'
 # N = DEFAULT_SIZE = 100
-DEFAULT_SIZE = [100, 100] 
+DEFAULT_SIZE = [100, 100]
 
 # Read images
 # lấy hình ảnh khuôn mặt (training faces). 
@@ -52,9 +52,9 @@ def as_row_matrix (X):
 # (ma trận dữ liệu).mean()
 [X, y] = read_images()      
 average_weight_matrix = np.reshape(as_row_matrix(X).mean( axis =0), X[0].shape)
-plt.imshow(average_weight_matrix, cmap=plt.cm.gray)
-plt.title("Mean Face")
-plt.show()
+#plt.imshow(average_weight_matrix, cmap=plt.cm.gray)
+#plt.title("Mean Face")
+#plt.show()
 
 # Calculate PCA 
 # Step1. Trừ mean. Hình ảnh trung bình A phải trừ với mỗi ảnh X
@@ -128,7 +128,7 @@ def pca (X, y, num_components =0):
 # Đối với một số dữ liệu ghost faces sắc nét , với một số trường hợp khác, chúng bị mờ đi. Độ sắc nét phụ thuộc vào nền và một số chi tiết của ảnh.
 
 
-def subplot ( title , images , rows , cols , sptitle ="", sptitles =[] , colormap = plt.cm.gray, filename = None, figsize = (10, 10) ):
+def subplot ( title , images , rows , cols , sptitle ="", sptitles =[] , colormap = plt.cm.gray, filename = None, figsize = (10, 100) ):
     fig = plt.figure(figsize = figsize)
     # main title
     fig.text (.5 , .95 , title , horizontalalignment ="center")
@@ -144,7 +144,8 @@ def subplot ( title , images , rows , cols , sptitle ="", sptitles =[] , colorma
     if filename is None :
         plt.show()
     else:
-        fig.savefig( filename )
+        #fig.savefig( filename )
+        plt.show()
 
         
 E = []
@@ -153,8 +154,8 @@ for i in range (min(number, 16)):
     e = eigenvectors[:,i].reshape(X[0].shape )
     E.append(np.asarray(e))
 # plot them and store the plot to " python_eigenfaces .pdf"
-subplot ( title ="Eigenfaces", images=E, rows =4, cols =4, colormap =plt.cm.gray , filename ="python_pca_eigenfaces.png")
-plt.show()
+#subplot ( title ="Eigenfaces", images=E, rows =10, cols =100, colormap =plt.cm.gray , filename ="python_pca_eigenfaces.png")
+#plt.show()
 
 
 # Cumulative sum of first highest eigenvalues is given below. Based on the plot it's clear we should pick these features
@@ -166,9 +167,9 @@ def get_eigen_value_distribution(eigenvectors):
 def plot_eigen_value_distribution(eigenvectors, interval):
     plt.scatter(interval, get_eigen_value_distribution(eigenvectors)[interval])
 
-plot_eigen_value_distribution(eigenvalues, range(0, number))
-plt.title("Cumulative sum of the first {0} eigenvalues".format(number))
-plt.show()
+#plot_eigen_value_distribution(eigenvalues, range(0, number))
+#plt.title("Cumulative sum of the first {0} eigenvalues".format(number))
+#plt.show()
 
 # mỗi khuôn mặt được biểu diễn dưới dạng tổ hợp tuyến tính của các eigenfaces
 # mỗi khuôn mặt được ước tính bằng cách sử dụng các eigenfaces tốt nhất, có giá trị riêng lớn nhất và đại diện cho các biến thể lớn nhất trong data.
@@ -272,10 +273,10 @@ projections = []
 #Φ^  = wi *ui   wi = tempProjections[i]  ui = eigenvectors[i]
 
 
-
+#train
 # xi is ảnh
 for index, xi in enumerate(X,start = 0):
-    tempProjections = project (eigenvectors, xi.reshape(1 , -1) , mean)
+    tempProjections = project(eigenvectors, xi.reshape(1 , -1) , mean)
     print("index : ",index)
     print("Ω_k^T : ",tempProjections.shape)
     projections.append(tempProjections)
@@ -283,7 +284,8 @@ for index, xi in enumerate(X,start = 0):
 
 
 # ảnh mới
-image = Image.open("./data/imgtest_5/thuy.jpg")
+#image = Image.open("./data/imgtest/test_img_hung_3.jpg")
+image = Image.open("./data/Test_dataset_1/40_2.jpg")
 image = image.convert("L")
 if (DEFAULT_SIZE is not None ):
     image = image.resize(DEFAULT_SIZE , Image.ANTIALIAS )
@@ -293,53 +295,44 @@ print("test_image ",test_image.reshape(1,-1))
 print("mean ",mean)
 skImage = (test_image.reshape(1,-1) - mean).reshape(test_image.shape)
 print("Φ_i=Γ_i-Ψ",skImage)
-plt.title("test image")
-plt.imshow(skImage,plt.cm.gray)
+#plt.title("test image")
+#plt.imshow(skImage,plt.cm.gray)
 #plt.imsave("./temp/img_test_thuy.jpg",skImage,cmap='gray')
-plt.show()
+#plt.show()
 
 # chiếu lên không gian M' chiều
 # Φ_i
 
 #predicted = predict(eigenvectors, mean , projections, y, test_image)
-predicted = predictWithThreshold(eigenvectors,mean,projections,y,test_image)
-print("predicted : ",predicted)
-if predicted != -1:
-    subplot(title ="Prediction", images =[test_image, X[predicted]], rows =1, cols =2, 
-            sptitles = ["Unknown image", "Prediction :{0}".format(y[predicted])] , colormap=plt.cm.gray, 
-            filename ="prediction_test.png", figsize = (5,5))
-else:
-    plt.title("Unknown images")
-    plt.imshow(test_image,plt.cm.gray)
-
-plt.show()
 
 # wi-w_i^k
 def calculate_maha_1(p,q):
     p = np.asarray(p).flatten()
     q = np.asarray (q).flatten()
     res1 = p-q
-    print("rest 1 : ",res1)
+    #print("rest 1 : ",res1)
     return res1
 
 def calculate_maha_2(p,q):
     p = np.asarray(p).flatten()
     q = np.asarray (q).flatten()
     res2 = p*q
-    print("rest 2 : ",res2)
+    #print("rest 2 : ",res2)
     return res2
 
 def mahalanobit_distance(mTestImage,mEigenvector,mEigenvalues,mMean,mProjections,C):
-    print("test_image : ",mTestImage)
+    minClass = -1
+    #print("test_image : ",mTestImage)
     Test_Q = project (mEigenvector, mTestImage.reshape (1 , -1) , mMean)
-    print("Test Q : ", Test_Q)
-    print("eigenvector: ",mEigenvector)
-    print("eigenvalues : ",mEigenvalues)
+    #print("Test Q : ", Test_Q)
+    #print("eigenvector: ",mEigenvector)
+    #print("eigenvalues : ",mEigenvalues)
     print("projection các ảnh trong tập training... ")
+    arrDis=[]
     for i in range(len(mProjections)):
-        print("projection i : ",mProjections[i])
+        #print("projection i : ",mProjections[i])
         wwk =calculate_maha_1(mProjections[i],Test_Q)
-        xxx = 0 
+        xxx = 0
         for z in range(len(wwk)):
             #print("mprojection shape : ",mProjections[z].shape)
             #print("Test_Q shape : ",Test_Q.shape)
@@ -357,17 +350,26 @@ def mahalanobit_distance(mTestImage,mEigenvector,mEigenvalues,mMean,mProjections
             #xxx += (1/np.sqrt(mEigenvalues[z])) * (np.power(wwk[z],2))
             #print("count xxx = ",(1/mEigenvalues[z]) * (np.power(wwk[z],2)))
             xxx += (1/mEigenvalues[z]) * (np.power(wwk[z],2))
-            
-
-        #print("xxx sqrt : ",math.sqrt(xxx))
+        arrDis.append(xxx)
         print("xxx ------------------------------------------------------- : ",xxx)
-        
-
+    a = np.array(arrDis)
+    print("min distance : ", np.amin(a))
+    index = np.argmin(a)
+    print("get index ", index)
+    return index
 
 print("Mahalanobis calculate...")
 # progress testimage 
-mahalanobit_distance(test_image,eigenvectors,eigenvalues,mean,projections,Cov)
+pred = mahalanobit_distance(test_image,eigenvectors,eigenvalues,mean,projections,Cov)
+print("predicted mahaa : ",pred)
+if pred != -1:
+    subplot(title ="Prediction Mahalanobis", images =[test_image, X[pred]], rows =1, cols =2, 
+            sptitles = ["Unknown image", "Prediction :{0}".format(y[pred])] , colormap=plt.cm.gray, 
+            filename ="prediction_test.png", figsize = (5,5))
+else:
+    plt.title("Unknown images")
+    plt.imshow(test_image,plt.cm.gray)
 
-
+plt.show()
 
 

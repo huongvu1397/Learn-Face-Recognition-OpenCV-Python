@@ -4,11 +4,11 @@ import cv2
 face_cascade = cv2.CascadeClassifier('./haarcascade_frontalface_default.xml')
 
 #tên người
-name = "huy"
+name = "tien"
 #kích cỡ ảnh resize
 size = 100
 #thư mục lưu data
-dir = "./code/data/"+name+"/"
+dir = "./data/img/"+name+"/"
 #tạo thư mục nếu chưa tồn tại
 try:
     os.mkdir(dir)
@@ -16,14 +16,14 @@ except OSError as error:
     print(error)
 
 #chọn video
-cap = cv2.VideoCapture('./step1/video/thuy.mp4')
+cap = cv2.VideoCapture('./data/img/tien.mp4')
 
 tempCount = 0
 
 while cap.isOpened():
     _,frame = cap.read()
     # flip vertical lập nếu video bị ngược 0 1
-    frame = cv2.flip(frame,0)
+    #frame = cv2.flip(frame,0)
 
     gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
     sample = frame
