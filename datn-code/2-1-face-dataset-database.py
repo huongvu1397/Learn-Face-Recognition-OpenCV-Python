@@ -44,7 +44,7 @@ while(True):
         cv2.rectangle(img , (x,y) ,( x+w , y+h ),(255,0,0),2)
         sampleNum = sampleNum + 1
         #Ghi dữ liệu khuôn mặt vào thư mục
-        cv2.imwrite("dataset/User."+id+'.'+str(sampleNum)+".jpg",gray[y:y+h,x:x+w])
+        cv2.imwrite("datn-dataset/User."+id+'.'+str(sampleNum)+".jpg",gray[y:y+h,x:x+w])
 
     cv2.imshow('frame',img)
     if cv2.waitKey(100) & 0xFF == ord('q'):

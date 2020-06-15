@@ -4,7 +4,7 @@ from PIL import Image
 import os
 
 #Thư mục chứa tập dữ liệu training.
-path = "dataset"
+path = "datn-dataset"
 
 #Bộ nhận dạng
 recognizer = cv2.face.EigenFaceRecognizer_create(10,3000)
