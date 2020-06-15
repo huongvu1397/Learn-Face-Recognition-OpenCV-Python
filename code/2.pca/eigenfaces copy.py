@@ -7,7 +7,7 @@ from numpy.linalg import inv
 import math
 
 
-IMAGE_DIR = './data/img_train_10/'
+IMAGE_DIR = './data/img_train_5/'
 # N = DEFAULT_SIZE = 100
 DEFAULT_SIZE = [100, 100]
 
@@ -285,7 +285,7 @@ for index, xi in enumerate(X,start = 0):
 
 # ảnh mới
 #image = Image.open("./data/imgtest/test_img_hung_3.jpg")
-image = Image.open("./data/imgtest_5/thom.jpg")
+image = Image.open("./data/imgtest_5/thuy.jpg")
 image = image.convert("L")
 if (DEFAULT_SIZE is not None ):
     image = image.resize(DEFAULT_SIZE , Image.ANTIALIAS )
@@ -303,7 +303,7 @@ print("Φ_i=Γ_i-Ψ",skImage)
 # chiếu lên không gian M' chiều
 # Φ_i
 
-#predicted = predict(eigenvectors, mean , projections, y, test_image)
+predicted = predict(eigenvectors, mean , projections, y, test_image)
 
 # wi-w_i^k
 def calculate_maha_1(p,q):
@@ -358,13 +358,15 @@ def mahalanobit_distance(mTestImage,mEigenvector,mEigenvalues,mMean,mProjections
     print("get index ", index)
     return index
 
-print("Mahalanobis calculate...")
+print("Euclide calculate...")
 # progress testimage 
-pred = mahalanobit_distance(test_image,eigenvectors,eigenvalues,mean,projections,Cov)
-print("predicted mahaa : ",pred)
-if pred != -1:
-    subplot(title ="Prediction Mahalanobis", images =[test_image, X[pred]], rows =1, cols =2, 
-            sptitles = ["Unknown image", "Prediction :{0}".format(y[pred])] , colormap=plt.cm.gray, 
+predicted = predict(eigenvectors, mean , projections, y, test_image)
+
+#pred = mahalanobit_distance(test_image,eigenvectors,eigenvalues,mean,projections,Cov)
+print("predicted Euclide : ",predicted)
+if predicted != -1:
+    subplot(title ="Prediction Euclide", images =[test_image, X[predicted]], rows =1, cols =2, 
+            sptitles = ["Unknown image", "Prediction :{0}".format(y[predicted])] , colormap=plt.cm.gray, 
             filename ="prediction_test.png", figsize = (5,5))
 else:
     plt.title("Unknown images")
