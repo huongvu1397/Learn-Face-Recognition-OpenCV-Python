@@ -22,8 +22,8 @@ def insertOrUpdate(id,name):
     conn.commit()
     conn.close()
 
-id = input('Nhập STT: ')
-name = input('Nhập tên người: ')
+id = input('Nhập Id: ')
+name = input('Nhập tên người cần nhận dạng: ')
 print('Bắt đầu ghi lại khuôn mặt của người, nhấn q để thoát!')
 
 insertOrUpdate(id,name)
@@ -38,7 +38,7 @@ while(True):
     gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
     #phát hiện khuôn mặt
-    faces = detector.detectMultiScale(gray,1.3,5)
+    faces = detector.detectMultiScale(gray,1.1,5)
     for(x,y,w,h) in faces:
         #Vẽ hình chữ nhật quanh mặt nhận được
         cv2.rectangle(img , (x,y) ,( x+w , y+h ),(255,0,0),2)
@@ -47,7 +47,7 @@ while(True):
         cv2.imwrite("datn-dataset/User."+id+'.'+str(sampleNum)+".jpg",gray[y:y+h,x:x+w])
 
     cv2.imshow('frame',img)
-    if cv2.waitKey(100) & 0xFF == ord('q'):
+    if cv2.waitKey(10) & 0xFF == ord('q'):
         break
     elif sampleNum>100:
         break

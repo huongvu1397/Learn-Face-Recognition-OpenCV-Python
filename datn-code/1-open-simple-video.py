@@ -4,16 +4,16 @@ import cv2
 cap = cv2.VideoCapture(0)
 
 while(True):
-    # Capture frame-by-frame
+    # Chụp từng khung hình
     ret, frame = cap.read()
 
-    #Display the resulting frame
+    # Hiển thị khung hình chụp được
     cv2.imshow('Frame',frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q') :
         break
 
-#When everything done, release the capture
+#Kết thúc và giải phóng 'cap'
 cap.release()
 cv2.destroyAllWindows
 

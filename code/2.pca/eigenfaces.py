@@ -7,7 +7,7 @@ from numpy.linalg import inv
 import math
 
 
-IMAGE_DIR = './data/img_train_10/'
+IMAGE_DIR = './datn-train-test-data/img_train_5_gray/'
 # N = DEFAULT_SIZE = 100
 DEFAULT_SIZE = [100, 100]
 
@@ -231,9 +231,6 @@ def dist_metric(p,q):
     print("result : ",result)
     return result
 
-
-
-
 def predict (W, mu , projections, y, X):
     minDist = float("inf")
     print("minDist = ",minDist)
@@ -249,6 +246,7 @@ def predict (W, mu , projections, y, X):
     return minClass
 
 resArray = []
+
 def predictWithThreshold(W,mu,projections,y,X):
     minClass = -1
     Q = project (W, X.reshape (1 , -1) , mu)
@@ -272,7 +270,6 @@ projections = []
 
 #Φ^  = wi *ui   wi = tempProjections[i]  ui = eigenvectors[i]
 
-
 #train
 # xi is ảnh
 for index, xi in enumerate(X,start = 0):
@@ -281,11 +278,9 @@ for index, xi in enumerate(X,start = 0):
     print("Ω_k^T : ",tempProjections.shape)
     projections.append(tempProjections)
 
-
-
 # ảnh mới
 #image = Image.open("./data/imgtest/test_img_hung_3.jpg")
-image = Image.open("./data/imgtest_5/thom.jpg")
+image = Image.open("./datn-train-test-data/img_test_5_rgb/hung.jpg")
 image = image.convert("L")
 if (DEFAULT_SIZE is not None ):
     image = image.resize(DEFAULT_SIZE , Image.ANTIALIAS )

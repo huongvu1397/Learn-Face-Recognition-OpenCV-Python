@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>Face</class>
+ <widget class="QMainWindow" name="Face">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -179,7 +179,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Thông tin nhân diện lần cuối</string>
+     <string>Thông tin nhân dạng lần cuối</string>
     </property>
    </widget>
    <widget class="QLabel" name="labelName">
@@ -212,6 +212,25 @@
     </property>
     <property name="text">
      <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnRecord">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>550</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Ghi hình</string>
     </property>
    </widget>
   </widget>
