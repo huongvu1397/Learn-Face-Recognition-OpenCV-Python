@@ -26,6 +26,10 @@ class MainFaceRecognition(QMainWindow):
         self.btnRecord.clicked.connect(self.onClickedRecord)
         self.textBrowser.setText('Ấn bắt đầu để chạy chương trình nhận diện khuôn mặt.')
         self.logic_capture = 0
+        self.logic_record = 0
+        self.fps = 24.0
+        self.width = 640
+        self.height = 480
 
     @pyqtSlot()
     def onClickBtnStart(self):
@@ -78,6 +82,9 @@ class MainFaceRecognition(QMainWindow):
                 print('Lưu hình ảnh tại :',NAME)
                 cv2.imwrite(NAME,img)
                 self.logic_capture = 1
+            
+            if(self.logic_record == 2):
+                self.record.write(img)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
@@ -123,10 +130,27 @@ class MainFaceRecognition(QMainWindow):
 
     @pyqtSlot()
     def onClickedRecord(self):
-        a =1 
+        if self.logic_record == 0:
+            #start record
+            self.btnRecord.setText("Dừng ghi hình")
+            cam.set(3, self.width) # set video widht
+            cam.set(4, self.height) # set video height
+            self.video_type = cv2.VideoWriter_fourcc(*'XVID')
+            self.filename = 'video-date.avi'
+            self.record = cv2.VideoWriter(self.filename,self.video_type,self.fps,(self.width,self.height))
+            self.logic_record = 2
+
+        elif self.logic_record == 2:
+            #stop record
+            self.btnRecord.setText("Ghi hình")
+            self.logic_record = 0
+            self.record.release()
+
+
 
     @pyqtSlot()
     def onClickBtnExit(self):
+        self.record.release()
         cam.release()
         cv2.destroyAllWindows()
         widget.close()
