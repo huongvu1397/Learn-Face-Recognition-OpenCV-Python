@@ -1,20 +1,27 @@
 import cv2
 import numpy as np
-import os 
+import os
+import sqlite3
 
+
+# Khởi tạo bộ nhận diện khuôn mặt
 #load model huấn luyện tại chương trình 2-2
 recognizer = cv2.face.EigenFaceRecognizer_create()
-recognizer.read('trainer/trainer.yml')   
+recognizer.read('trainer/trainer.yml')
+
 cascadePath = "haarcascade_frontalface_default.xml"
-faceCascade = cv2.CascadeClassifier(cascadePath);
+# Khởi tạo bộ phát hiện khuôn mặt
+faceCascade = cv2.CascadeClassifier(cascadePath)
 
-font = cv2.FONT_HERSHEY_SIMPLEX
-
-#iniciate id counter, the number of persons you want to include
-id = 2 #two persons (e.g. Jacob, Jack)
-
-
-names = ['','Huong','Hung','Thom']  #key in names, start from the second place, leave first empty
+#Lấy thông tin trong database
+def getPeople(id):
+    conn=sqlite3.connect("FaceUserDatabase.db")
+    cursor=conn.execute("SELECT * FROM people WHERE ID="+str(id))
+    people=None
+    for row in cursor:
+        names=row
+    conn.close()
+    return names
 
 # Initialize and start realtime video capture
 cam = cv2.VideoCapture(0)
@@ -43,16 +50,18 @@ while True:
         img = cv2.rectangle(img, (x,y), (x+w,y+h), (0,255,0), 2)
         roi = gray[y:y+h,x:x+w]
 
+        name = None
+
         try:
             roi = cv2.resize(roi,(100,100))
             predictedLabel,confidence = recognizer.predict(roi)
-
             if(predictedLabel  == -1):
                 print("Label : %s , Confidence : %.2f    ",predictedLabel,confidence)
                 cv2.putText(img,"unknown",(x,y-20),cv2.FONT_HERSHEY_SIMPLEX,1,255,2)
             else:
-                cv2.putText(img,names[predictedLabel],(x,y-20),cv2.FONT_HERSHEY_SIMPLEX,1,255,2)
+                name = getPeople(predictedLabel)
                 print("Label : %s , Confidence : %.2f    ",predictedLabel,confidence)
+                cv2.putText(img,str(name[0]),(x,y-20),cv2.FONT_HERSHEY_SIMPLEX,1,255,2)
 
         except: 
             continue

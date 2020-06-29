@@ -3,6 +3,7 @@ import numpy as np
 import os 
 import datetime
 import sys
+import sqlite3
 
 #https://iosoft.blog/2019/07/31/rpi-camera-display-pyqt-opencv/
 #https://www.youtube.com/watch?v=iA45JnQh3Ow
@@ -31,6 +32,16 @@ class MainFaceRecognition(QMainWindow):
         self.width = 640
         self.height = 480
 
+    #Lấy thông tin trong database
+    def getPeople(self,id):
+        conn=sqlite3.connect("FaceUserDatabase.db")
+        cursor=conn.execute("SELECT * FROM people WHERE ID="+str(id))
+        people=None
+        for row in cursor:
+            people=row
+        conn.close()
+        return people
+
     @pyqtSlot()
     def onClickBtnStart(self):
         self.textBrowser.setText('Bắt đầu chạy.')
@@ -46,6 +57,8 @@ class MainFaceRecognition(QMainWindow):
 
             faces = faceCascade.detectMultiScale(gray,scaleFactor = 1.1,minNeighbors = 5)
 
+            names = None
+
             for(x,y,w,h) in faces:
                 img = cv2.rectangle(img, (x,y), (x+w,y+h), (0,255,0), 2)
                 roi = gray[y:y+h,x:x+w]
@@ -59,9 +72,11 @@ class MainFaceRecognition(QMainWindow):
                         self.textBrowser.setText('Phát hiện khuôn mặt của người lạ')
 
                     else:
-                        cv2.putText(img,names[predictedLabel],(x,y-20),cv2.FONT_HERSHEY_SIMPLEX,1,255,2)
+                        names = self.getPeople(predictedLabel) #  [0] - tên [1]- id
+                        print("name : ",names)
+                        cv2.putText(img,str(names[0]),(x,y-20),cv2.FONT_HERSHEY_SIMPLEX,1,255,2)
                         #print("Label : %s , Confidence : %.2f    ",predictedLabel,confidence)
-                        txt_predicted = names[predictedLabel]
+                        txt_predicted = str(names[0])
                         txt_notification = "Phát hiện khuôn mặt của " + txt_predicted
                         self.textBrowser.setText(txt_notification)
                         
@@ -78,7 +93,7 @@ class MainFaceRecognition(QMainWindow):
             #Chụp hình tại frame chỉ định
             if(self.logic_capture == 2):
                 date = datetime.datetime.now()
-                NAME = r'C:\Users\Huong Vu\Desktop\GitDATN\Learn-Face-Recognition-OpenCV-Python\datn-image-capture/Image_%s%s%sT%s%s%s.png'%(date.year,date.month,date.day,date.hour,date.minute,date.second)
+                NAME = r'datn-image-capture/Image_%s%s%sT%s%s%s.png'%(date.year,date.month,date.day,date.hour,date.minute,date.second)
                 print('Lưu hình ảnh tại :',NAME)
                 cv2.imwrite(NAME,img)
                 self.logic_capture = 1
@@ -109,13 +124,13 @@ class MainFaceRecognition(QMainWindow):
 
     def showInfoPerson(self,predictedLabel):
         if predictedLabel == -1:
-            path_image = r'C:\Users\Huong Vu\Desktop\GitDATN\Learn-Face-Recognition-OpenCV-Python\datn-info-person\unknown_image.png'
+            path_image = r'datn-info-person\unknown_image.jpg'
             self.imageFrame.setPixmap(QPixmap(path_image))
             self.imageFrame.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
             self.txtName.setText("Unknown")
 
         else:    
-            path_image = r'C:\Users\Huong Vu\Desktop\GitDATN\Learn-Face-Recognition-OpenCV-Python\datn-info-person\1_huongvu.png'
+            path_image = r'datn-dataset\User.%s.1.jpg'%(predictedLabel)
             #qformat = QImage.Format_Indexed8
             #if len(img.shape)== 3:
             #    if(img.shape[2]) == 4:
@@ -136,7 +151,8 @@ class MainFaceRecognition(QMainWindow):
             cam.set(3, self.width) # set video widht
             cam.set(4, self.height) # set video height
             self.video_type = cv2.VideoWriter_fourcc(*'XVID')
-            self.filename = 'video-date.avi'
+            date = datetime.datetime.now()
+            self.filename = r'datn-video-record/Video_%s%s%sT%s%s%s.avi'%(date.year,date.month,date.day,date.hour,date.minute,date.second)
             self.record = cv2.VideoWriter(self.filename,self.video_type,self.fps,(self.width,self.height))
             self.logic_record = 2
 
@@ -162,10 +178,6 @@ cascadePath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascadePath)
 # Initialize and start realtime video capture
 cam = cv2.VideoCapture(0)
-
-names = ['','Huong','Hung','Thom']  #key in names, start from the second place, leave first empty
-
-
 
 
 app = QApplication(sys.argv)
