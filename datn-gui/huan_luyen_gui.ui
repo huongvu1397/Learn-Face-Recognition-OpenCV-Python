@@ -199,7 +199,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QTextEdit" name="edtName_2">
+   <widget class="QTextEdit" name="edtThreshold">
     <property name="geometry">
      <rect>
       <x>600</x>

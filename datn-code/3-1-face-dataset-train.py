@@ -93,19 +93,22 @@ class MainFaceTraining(QMainWindow):
         self.trainingImage()
 
     def trainingImage(self):
+        self.textBrowser.setText('Đang huấn luyện khuôn mặt ...')
         #Thư mục chứa tập dữ liệu training.
         path = "datn-dataset"
-        #threshold = self.edtThreshold.toPlainText()
+        threshold = self.edtThreshold.toPlainText()
+        if threshold == "" :
+            threshold = 3000
+        print("th : ",threshold)
         #Khởi tạo bộ nhận dạng # 0 component là lấy hết thành phần của eigenfaces
         recognizer = cv2.face.EigenFaceRecognizer_create(num_components= 0,threshold= 3000)
         #Khởi tạo bộ phát hiện khuôn mặt
         detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-        print ("\n Đang huấn luyện khuôn mặt ...")
         faces,ids = self.getImagesAndLabels(path)
         recognizer.train(faces, np.array(ids))
         # Lưu model huấn luyện tại thư mục trainer/trainer.yml
         recognizer.write('trainer/trainer.yml')
-        print("\n Đã huấn luyện thành công {0} khuôn mặt . Kết thúc chương trình".format(len(np.unique(ids))))
+        self.textBrowser.setText("\n Đã huấn luyện thành công {0} khuôn mặt . Kết thúc chương trình".format(len(np.unique(ids))))
 
     #Phân loại dữ liệu (images & label)
     def getImagesAndLabels(self,path):
