@@ -75,7 +75,7 @@ class MainFaceRecognition(QMainWindow):
                         #print("Label : %s , Confidence : %.2f    ",predictedLabel,confidence)
                         cv2.putText(img,"unknown",(x,y-20),cv2.FONT_HERSHEY_SIMPLEX,1,255,2)
                         self.textBrowser.setText('Phát hiện khuôn mặt của người lạ')
-                        logger = r'phat_hien_%s_vao_%s_%s_%s'%(names[0],date.hour,date.minute,date.second)
+                        logger = r'phat_hien_nguoi_la_vao_%s_%s_%s'%(date.hour,date.minute,date.second)
                         self.f.write(logger+"\n")
 
                     else:
@@ -86,7 +86,6 @@ class MainFaceRecognition(QMainWindow):
                         txt_predicted = str(names[0])
                         txt_notification = "Phát hiện khuôn mặt của " + txt_predicted
                         self.textBrowser.setText(txt_notification)
-                        #%d\r\n" % (i+1)
                         logger = r'phat_hien_%s_vao_%s_%s_%s'%(names[0],date.hour,date.minute,date.second)
                         self.f.write(logger+"\n")
                         
@@ -141,17 +140,10 @@ class MainFaceRecognition(QMainWindow):
 
         else:    
             path_image = r'datn-dataset\User.%s.1.jpg'%(predictedLabel)
-            #qformat = QImage.Format_Indexed8
-            #if len(img.shape)== 3:
-            #    if(img.shape[2]) == 4:
-            #        qformat = QImage.Format_RGBA888
-            #    else:
-            #        qformat = QImage.Format_RGB888
-            #img = QImage(img,img.shape[1],img.shape[0],qformat)
-            #img = img.rgbSwapped()
+            names = self.getPeople(predictedLabel)
             self.imageFrame.setPixmap(QPixmap(path_image))
             self.imageFrame.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-            self.txtName.setText("Vũ Văn Hưởng")
+            self.txtName.setText(names[0])
 
     @pyqtSlot()
     def onClickedRecord(self):
@@ -172,8 +164,6 @@ class MainFaceRecognition(QMainWindow):
             self.logic_record = 0
             self.record.release()
 
-
-
     @pyqtSlot()
     def onClickBtnExit(self):
         self.f.close()
@@ -189,7 +179,6 @@ cascadePath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascadePath)
 # Initialize and start realtime video capture
 cam = cv2.VideoCapture(1)
-
 
 app = QApplication(sys.argv)
 widget = MainFaceRecognition()
