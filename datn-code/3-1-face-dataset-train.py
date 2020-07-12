@@ -150,7 +150,7 @@ class MainFaceTraining(QMainWindow):
         conn.close()
 
 #Init
-cam = cv2.VideoCapture(0)
+cam = cv2.VideoCapture(1)
 detector = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 
